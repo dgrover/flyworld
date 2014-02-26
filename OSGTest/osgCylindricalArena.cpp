@@ -16,22 +16,23 @@
 #include <osg/Material>
 #include <osg/Texture2D>
 #include <osg/Math>
-/*#include <osgGA/FlightManipulator>
+#include <osgGA/FlightManipulator>
 #include <osgGA/FirstPersonManipulator>
 #include <osgGA/TerrainManipulator>
 #include <osgGA/DriveManipulator>
 #include <osgGA/SphericalManipulator>
 #include <osgGA/UFOManipulator>
-#include <osgGA/AnimationPathManipulator>*/
+#include <osgGA/AnimationPathManipulator>
+#include <osgGA/TrackballManipulator>
 
 
-osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1); //black
-float cylinderRadius = 2.0f;
+osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1); //black background
+float cylinderRadius = 2.0f; 
 float cylinderHeight = 4.0f;
 float cylinderX = 0.0f; //location
 float cylinderY = 0.0f;
 float cylinderZ = 0.0f;
-std::string imageFileName="test.jpg";
+std::string imageFileName="rand_cb.jpg";
 
 osg::Geode* createCylinder()
 {
@@ -53,7 +54,7 @@ osg::Geode* createCylinder()
 
 
 	osg::TessellationHints* hints = new osg::TessellationHints;
-	hints->setDetailRatio(5.0f);
+	hints->setDetailRatio(15.0f);
 
 	hints->setCreateBackFace(true);
 	hints->setCreateFrontFace(false);
@@ -80,7 +81,7 @@ osg::Geode* createShapes()
 	float height = 1.0f;
 
 	osg::TessellationHints* hints = new osg::TessellationHints;
-	hints->setDetailRatio(3.0f);
+	hints->setDetailRatio(15.0f);
 
 	//hints->setCreateBackFace(true);
 	//hints->setCreateFrontFace(false);
@@ -89,7 +90,7 @@ osg::Geode* createShapes()
 	//hints->setCreateBottom(false);
 
 
-	osg::ShapeDrawable* box = new osg::ShapeDrawable(new osg::Box(osg::Vec3(0.0f,0.0f,0.0f),radius/8), hints);
+	osg::ShapeDrawable* box = new osg::ShapeDrawable(new osg::Box(osg::Vec3(1.0f,0.0f,0.0f),radius/8), hints);
 	box->setColor(osg::Vec4(1,0,1,1));
 
 	osg::ShapeDrawable* cone = new osg::ShapeDrawable(new osg::Cone(osg::Vec3(0.5f,1.0f,0.0f),radius/10,height/2),hints);
@@ -120,7 +121,10 @@ int main( int argc, char **argv )
 	// add model to viewer.
 	viewer.setSceneData( root );
 	viewer.getCamera()->setClearColor(backgroundColor);
-	//viewer.setCameraManipulator(new osgGA::AnimationPathManipulator);
+	viewer.setCameraManipulator(new osgGA::TrackballManipulator);
+	//starting position for manipulator
+	viewer.getCameraManipulator()->setHomePosition(osg::Vec3d(0,0,0), osg::Vec3d(1,1,0), osg::Vec3d(0,0,1), false); //eye, center, up
+	
 	return viewer.run();
 
 	return 0;

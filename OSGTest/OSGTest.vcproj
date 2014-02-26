@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="OSGTest"
+	Name="osgCylindricalDisplay"
 	ProjectGUID="{FC68D995-E3A5-45A4-B753-10DC406B8366}"
 	RootNamespace="OSGTest"
 	Keyword="Win32Proj"

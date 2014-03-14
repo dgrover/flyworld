@@ -35,7 +35,7 @@ double depth=0;
 double xS=0.0; //speed of camera
 double yS=0;
 double zS=0.0;
-double rS=20; //rotation speed
+double rS=0; //rotation speed
 //double camHorLoc=boxHorMin+imageWidth/2*numBoxes; //location of camera
 double camHorLoc=0;
 double camVertLoc=0;
@@ -159,11 +159,16 @@ hints->setCreateFrontFace(false);
 hints->setCreateNormals(false);
 hints->setCreateTop(false);
 hints->setCreateBottom(false);
-
+osg::Vec3f* rotationVec=new osg::Vec3(0,0,1);
+osg::Quat* quat = new osg::Quat(30, *rotationVec);
+osg::Cylinder* cyl = new osg::Cylinder(osg::Vec3(0.0f,0.0f,0.0f),radius,height);
+cyl->setRotation(*quat);
+osg::ShapeDrawable* cylinder = new osg::ShapeDrawable(cyl ,hints);
+  
     //geode->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f),radius),hints));
    // geode->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3(2.0f,0.0f,0.0f),2*radius),hints));
    // geode->addDrawable(new osg::ShapeDrawable(new osg::Cone(osg::Vec3(4.0f,0.0f,0.0f),radius,height),hints));
-    geode->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(0.0f,0.0f,0.0f),radius,height),hints));
+    geode->addDrawable(cylinder);
    // geode->addDrawable(new osg::ShapeDrawable(new osg::Capsule(osg::Vec3(8.0f,0.0f,0.0f),radius,height),hints));
 
   /*  osg::HeightField* grid = new osg::HeightField;

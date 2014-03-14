@@ -32,7 +32,7 @@ float cylinderHeight = 4.0f;
 float cylinderX = 0.0f; //location
 float cylinderY = 0.0f;
 float cylinderZ = 0.0f;
-std::string imageFileName="rand_cb.jpg";
+std::string imageFileName="test.jpg";
 
 osg::Geode* createCylinder()
 {
@@ -121,7 +121,7 @@ int main( int argc, char **argv )
 	// add model to viewer.
 	viewer.setSceneData( root );
 	viewer.getCamera()->setClearColor(backgroundColor);
-	viewer.setCameraManipulator(new osgGA::TrackballManipulator);
+	viewer.setCameraManipulator(new osgGA::FlightManipulator);
 	//starting position for manipulator
 	viewer.getCameraManipulator()->setHomePosition(osg::Vec3d(0,0,0), osg::Vec3d(1,1,0), osg::Vec3d(0,0,1), false); //eye, center, up
 	

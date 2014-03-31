@@ -148,8 +148,8 @@ osg::Geode* createCylinder()
 	hints->setCreateBackFace(true);
 	hints->setCreateFrontFace(false);
 	hints->setCreateNormals(false);
-	hints->setCreateTop(false);
-	hints->setCreateBottom(false);
+	hints->setCreateTop(true);
+	hints->setCreateBottom(true);
 	geode->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(cylinderX,cylinderY,cylinderZ),cylinderRadius,cylinderHeight),hints));
 
 
@@ -264,7 +264,7 @@ osg::Vec3d camEye, camCenter, camUp;
 
 
 
-
+		osg::Matrixd currentView = viewer.getCamera()->getViewMatrix();
 osg::Matrixd cameraRotation;
 osg::Matrixd cameraTrans;
 /*cameraRotation.makeRotate(
@@ -280,20 +280,28 @@ cameraRotation.makeRotate(
  cameraTrans.makeTranslate( 0,0,translationNumbers[index] );
 
  //cameraTrans.makeTranslate( translationNumbers[index],translationNumbers[index+1],translationNumbers[index+2] );
- viewer.getCamera()->setViewMatrix(viewer.getCamera()->getViewMatrix()*cameraRotation*cameraTrans);
+ viewer.getCamera()->setViewMatrix(currentView*cameraRotation*cameraTrans);
 
 
 viewer.getCamera()->getViewMatrixAsLookAt(camEye, camCenter, camUp, 1.0);
-if(camEye.z()>=cylinderHeight/2)
+cameraRotation.makeRotate(
+			osg::DegreesToRadians(rotationNumbers[index]*2), osg::Vec3(0,1,0), // roll
+          osg::DegreesToRadians(rotationNumbers[index+1]*2), osg::Vec3(1,0,0) , // pitch
+          osg::DegreesToRadians( rotationNumbers[index+2]*2), osg::Vec3(0,0,1) ); // heading
+if(camEye.z()>=cylinderHeight/2-0.5)
 {
-	viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camEye.x(), camEye.y(), cylinderHeight/2), camCenter, camUp);
+	viewer.getCamera()->setViewMatrix(currentView*cameraRotation);
 }
 
-if(camEye.z()<=cylinderHeight/2*-1)
+if(camEye.z()<=cylinderHeight/2*-1+0.5)
 {
-	viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camEye.x(), camEye.y(), cylinderHeight/2*-1), camCenter, camUp);
+	viewer.getCamera()->setViewMatrix(currentView*cameraRotation);
 }
 
+if(pow(camEye.x(), 2) + pow(camEye.y(), 2) >=pow(cylinderRadius, 2)-0.5)
+{
+viewer.getCamera()->setViewMatrix(currentView*cameraRotation);
+}
 //viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc,0,camVertLoc), osg::Vec3d(camHorLoc,depth,camVertLoc), up);
 		viewer.frame();
 		index+=3;
@@ -304,3 +312,8 @@ index=0;
 	}
 	return 0;
 }
+
+
+//cylinderRadius=2
+
+//x^2+y^2=radius^2

@@ -1,26 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OSGTest", "OSGTest\OSGTest.vcproj", "{FC68D995-E3A5-45A4-B753-10DC406B8366}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osgCylindricalDisplay", "OSGTest\OSGTest.vcproj", "{FC68D995-E3A5-45A4-B753-10DC406B8366}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Pocket PC 2003 (ARMV4) = Debug|Pocket PC 2003 (ARMV4)
 		Debug|Win32 = Debug|Win32
-		Release|Pocket PC 2003 (ARMV4) = Release|Pocket PC 2003 (ARMV4)
+		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|Pocket PC 2003 (ARMV4)
-		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Debug|Pocket PC 2003 (ARMV4).Build.0 = Debug|Pocket PC 2003 (ARMV4)
-		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Debug|Pocket PC 2003 (ARMV4).Deploy.0 = Debug|Pocket PC 2003 (ARMV4)
 		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Debug|Win32.ActiveCfg = Debug|Win32
 		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Debug|Win32.Build.0 = Debug|Win32
-		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Pocket PC 2003 (ARMV4)
-		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Release|Pocket PC 2003 (ARMV4).Build.0 = Release|Pocket PC 2003 (ARMV4)
-		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Release|Pocket PC 2003 (ARMV4).Deploy.0 = Release|Pocket PC 2003 (ARMV4)
+		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Debug|x64.ActiveCfg = Debug|x64
+		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Debug|x64.Build.0 = Debug|x64
 		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Release|Win32.ActiveCfg = Release|Win32
 		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Release|Win32.Build.0 = Release|Win32
+		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Release|x64.ActiveCfg = Release|x64
+		{FC68D995-E3A5-45A4-B753-10DC406B8366}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

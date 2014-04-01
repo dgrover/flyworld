@@ -42,7 +42,7 @@ double camVertLoc=0;
 double distance=13.5;
 osg::Vec3d up=osg::Vec3d(0,0,1); //up vector
 
-std::string imageFileName="color2.jpg";
+std::string imageFileName="verticalLine.jpg";
 
 //	setViewMatrixAsLookAt(osg::Vec3d(move,distance,camVertLoc+yS*currTime), osg::Vec3d(move,0.0,camVertLoc+yS*currTime), up);
 
@@ -130,7 +130,7 @@ if (nv->getFrameStamp())
 			 currTime= nv->getFrameStamp()->getSimulationTime();
 }
 osg::Vec3f* rotationVec=new osg::Vec3(0,0,1);
-osg::Quat* quat = new osg::Quat(0.5*currTime, *rotationVec);
+osg::Quat* quat = new osg::Quat(3.14159*2*10*currTime, *rotationVec);
 
 
 osg::Geode * geode = dynamic_cast< osg::Geode * >( node ); 
@@ -149,7 +149,7 @@ osg::Shape* cyl = ((osg::ShapeDrawable*) drawable)->getShape();
 
 
 
-
+/*
 class CameraUpdateCallback : public osg::NodeCallback
 {
 public:
@@ -212,7 +212,7 @@ private:
 	double  timeToSubtract;
 
 };
-
+*/
 
 
 
@@ -245,11 +245,11 @@ osg::Geode* createShapes()
     geode->setStateSet( stateset );
 	geode->setCullingActive(false);
     
-    float radius = 5; //0.8f;
-    float height = 3.6; //5.02654824574*8/12;
+    float radius = 4.8;//5; //0.8f;
+    float height = 3.8;//3.6; //5.02654824574*8/12;
     
    osg::TessellationHints* hints = new osg::TessellationHints;
-    hints->setDetailRatio(1.0f);
+    hints->setDetailRatio(0.8f);
 
 
    hints->setCreateBackFace(true);
@@ -295,10 +295,10 @@ int main( int argc, char **argv )
 
 
 
-  int xoffset = 0;
-    int yoffset = 20;
-	int width=300;
-	int height=400;
+  int xoffset = 1920;
+    int yoffset = 0;
+	int width=800;
+	int height=1280;
 
     // front
     {
@@ -307,7 +307,7 @@ int main( int argc, char **argv )
         traits->y = yoffset + 0;
         traits->width = width;
         traits->height = height;
-        traits->windowDecoration = true;
+        traits->windowDecoration = false;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;
 
@@ -336,7 +336,7 @@ int main( int argc, char **argv )
         traits->y = yoffset + 0;
         traits->width = width;
         traits->height = height;
-        traits->windowDecoration = true;
+        traits->windowDecoration = false;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;
 
@@ -374,7 +374,7 @@ camTrans.makeTranslate(0.0,0.0,distance*2);
         traits->y = yoffset;
         traits->width = width;
         traits->height = height;
-        traits->windowDecoration = true;
+        traits->windowDecoration = false;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;
 
@@ -420,7 +420,7 @@ camTrans2.makeTranslate(0.0,0.0,-1*distance);
         traits->y = yoffset;
         traits->width = width;
         traits->height = height;
-        traits->windowDecoration = true;
+        traits->windowDecoration = false;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;
 

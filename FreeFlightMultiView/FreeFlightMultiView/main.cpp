@@ -18,8 +18,8 @@
 #include <osg/Math>
 //#include <osgSim>
 
-double imageWidth=1200;
-double imageHeight=800;
+double imageWidth=800;
+double imageHeight=1280;
 
 double fovy=30;
 
@@ -130,7 +130,7 @@ if (nv->getFrameStamp())
 			 currTime= nv->getFrameStamp()->getSimulationTime();
 }
 osg::Vec3f* rotationVec=new osg::Vec3(0,0,1);
-osg::Quat* quat = new osg::Quat(3.14159*2*10*currTime, *rotationVec);
+osg::Quat* quat = new osg::Quat(3.14159*2*currTime, *rotationVec);
 
 
 osg::Geode * geode = dynamic_cast< osg::Geode * >( node ); 

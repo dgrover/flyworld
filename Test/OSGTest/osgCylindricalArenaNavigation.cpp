@@ -53,7 +53,7 @@ double boxVertMax=boxVertMin + imageHeight;
 
 
 
-
+osg::BoundingBox bb;
 
 
 class CameraUpdateCallback : public osg::NodeCallback
@@ -76,24 +76,7 @@ public:
 
 		if (nv->getFrameStamp()) {
 			double currTime = nv->getFrameStamp()->getSimulationTime();
-			//if (currTime - _prevTime > _delay) {
-
-//use timeToSubtract..........................
-//boxHorMin+imageWidth/2*3 switching point to boxHorMin+imageWidth/2 (or camHorLoc)
-
-				//boxHorMin+imageWidth/2*numBoxes is middle of boxes
-				//move=camHorLoc+xS*(currTime-timeToSubtract);
-/*if(move>=boxHorMin+imageWidth/2*3)
-{
-	
-timeToSubtract=currTime;
-move=camHorLoc;
-}*/
-//cam->setProjectionMatrixAsPerspective(30, 3.0 / 3.0, 0.1, 3000);
-//cam->setProjectionMatrix(osg::Matrix::ortho(-1,1,-1,1,-1, 1));
-				//cam->setViewMatrixAsLookAt(osg::Vec3d(move,distance,camVertLoc+yS*currTime), osg::Vec3d(move,0.0,camVertLoc+yS*currTime), up);
-//cam->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc,distance,camVertLoc+yS*currTime), osg::Vec3d(move,depth+zS*currTime,camVertLoc+yS*currTime), up);
-//makeRotate (value_type angle, const Vec3f &axis)
+			
 osg::Matrixd cameraRotation;
 osg::Matrixd cameraTrans;
 cameraRotation.makeRotate(
@@ -179,22 +162,28 @@ osg::Geode* createShapes()
 	//hints->setCreateBottom(false);
 
 
-	osg::ShapeDrawable* box = new osg::ShapeDrawable(new osg::Box(osg::Vec3(1.0f,0.0f,0.0f),radius/8), hints);
+	//osg::ShapeDrawable* box = new osg::ShapeDrawable(new osg::Box(osg::Vec3(1.0f,0.0f,0.0f),radius/8), hints);
+	//box->setColor(osg::Vec4(1,0,1,1));
+
+	osg::ShapeDrawable* box = new osg::ShapeDrawable(new osg::Box(osg::Vec3(-1.65f,0.0f,0.0f),0.5, 0.5, 4), hints);
 	box->setColor(osg::Vec4(1,0,1,1));
 
-	osg::ShapeDrawable* cone = new osg::ShapeDrawable(new osg::Cone(osg::Vec3(0.5f,1.0f,0.0f),radius/10,height/2),hints);
-	cone->setColor(osg::Vec4(1,0,0,1));
+	//osg::ShapeDrawable* cone = new osg::ShapeDrawable(new osg::Cone(osg::Vec3(0.5f,1.0f,0.0f),radius/10,height/2),hints);
+	//cone->setColor(osg::Vec4(1,0,0,1));
 
-	osg::ShapeDrawable* capsule = new osg::ShapeDrawable(new osg::Capsule(osg::Vec3(1.0f,1.0f,0.0f),radius/8,height/3),hints);
-	capsule->setColor(osg::Vec4(0,0,1,1));
+	//osg::ShapeDrawable* capsule = new osg::ShapeDrawable(new osg::Capsule(osg::Vec3(1.0f,1.0f,0.0f),radius/8,height/3),hints);
+	//capsule->setColor(osg::Vec4(0,0,1,1));
 
-	osg::ShapeDrawable* sphere = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,-1.0f,0.0f),radius/10),hints);
-	sphere->setColor(osg::Vec4(0,1,1,1));
+	//osg::ShapeDrawable* sphere = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,-1.0f,0.0f),radius/10),hints);
+	//sphere->setColor(osg::Vec4(0,1,1,1));
 
-	geode->addDrawable(sphere);
+	//geode->addDrawable(sphere);
 	geode->addDrawable(box);
-	geode->addDrawable(cone);
-	geode->addDrawable(capsule);
+	//geode->addDrawable(cone);
+	//geode->addDrawable(capsule);
+
+bb=box->computeBound();
+
 	return geode;
 }
 
@@ -273,21 +262,23 @@ osg::Matrixd cameraTrans;
           osg::DegreesToRadians( 0.0), osg::Vec3(0,0,1) ); // roll*/
 
 cameraRotation.makeRotate(
-			osg::DegreesToRadians(rotationNumbers[index]), osg::Vec3(0,1,0), // roll
+			osg::DegreesToRadians(rotationNumbers[index]), osg::Vec3(0,1,0), // heading
           osg::DegreesToRadians(rotationNumbers[index+1]), osg::Vec3(1,0,0) , // pitch
-          osg::DegreesToRadians( rotationNumbers[index+2]), osg::Vec3(0,0,1) ); // heading
+          osg::DegreesToRadians( rotationNumbers[index+2]), osg::Vec3(0,0,1) ); // roll
 
- cameraTrans.makeTranslate( 0,0,translationNumbers[index] );
+ cameraTrans.makeTranslate( 0,0,translationNumbers[index]*2 );
 
  //cameraTrans.makeTranslate( translationNumbers[index],translationNumbers[index+1],translationNumbers[index+2] );
- viewer.getCamera()->setViewMatrix(currentView*cameraRotation*cameraTrans);
+ //viewer.getCamera()->setViewMatrix(currentView*cameraRotation*cameraTrans);
+
+ viewer.getCamera()->setViewMatrix(currentView*cameraTrans);
 
 
 viewer.getCamera()->getViewMatrixAsLookAt(camEye, camCenter, camUp, 1.0);
 cameraRotation.makeRotate(
-			osg::DegreesToRadians(rotationNumbers[index]*2), osg::Vec3(0,1,0), // roll
-          osg::DegreesToRadians(rotationNumbers[index+1]*2), osg::Vec3(1,0,0) , // pitch
-          osg::DegreesToRadians( rotationNumbers[index+2]*2), osg::Vec3(0,0,1) ); // heading
+			osg::DegreesToRadians(rotationNumbers[index]*1), osg::Vec3(0,1,0), // heading
+          osg::DegreesToRadians(rotationNumbers[index+1]*0), osg::Vec3(1,0,0) , // pitch
+          osg::DegreesToRadians( rotationNumbers[index+2]*0), osg::Vec3(0,0,1) ); // roll
 if(camEye.z()>=cylinderHeight/2-0.5)
 {
 	viewer.getCamera()->setViewMatrix(currentView*cameraRotation);
@@ -302,6 +293,13 @@ if(pow(camEye.x(), 2) + pow(camEye.y(), 2) >=pow(cylinderRadius, 2)-0.5)
 {
 viewer.getCamera()->setViewMatrix(currentView*cameraRotation);
 }
+
+if(bb.contains(camEye))
+{
+viewer.getCamera()->setViewMatrix(currentView*cameraRotation);
+break;
+}
+
 //viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc,0,camVertLoc), osg::Vec3d(camHorLoc,depth,camVertLoc), up);
 		viewer.frame();
 		index+=3;

@@ -42,7 +42,8 @@ double camVertLoc=0;
 double distance=20;
 osg::Vec3d up=osg::Vec3d(0,0,1); //up vector
 
-std::string imageFileName="color2.jpg";
+//std::string imageFileName="color2.jpg";
+std::string imageFileName="numberline.gif";
 
 
 
@@ -61,7 +62,7 @@ public:
         _texmat(texmat),
         _phaseS(35.0f),
         _phaseT(18.0f),
-        _phaseScale(5.0f),
+      //  _phaseScale(5.0f),
         _delay(delay),
         _prevTime(0.0)
     {
@@ -74,21 +75,19 @@ public:
 
         if (nv->getFrameStamp()) {
             double currTime = nv->getFrameStamp()->getSimulationTime();
-            if (currTime - _prevTime > _delay) {
+            /*if (currTime - _prevTime > _delay) */{
 
                 float rad = osg::DegreesToRadians(currTime);
 
-                // zoom scale (0.2 - 1.0)
-                float scale = sin(rad * _phaseScale) * 0.4f + 0.6f;
-                float scaleR = 1.0f - scale;
+              
 
                 // calculate new texture coordinates
                 float s, t;
-                s = ((sin(rad * _phaseS) + 1) * 0.5f) * (scaleR);
-                t = ((sin(rad * _phaseT) + 1) * 0.5f) * (scaleR);
+                s = ((sin(rad * _phaseS) + 1) * 0.5f);
+                t = 0;//((sin(rad * _phaseT) + 1) * 0.5f) * (scaleR);
 
 
-                _texmat->setMatrix(osg::Matrix::translate(s,t,1.0)*osg::Matrix::scale(scale,scale,1.0));
+				_texmat->setMatrix(osg::Matrix::translate(s,t,0.0));
 
                 // record time
                 _prevTime = currTime;
@@ -99,8 +98,7 @@ public:
 private:
     osg::TexMat* _texmat;
 
-    float _phaseS, _phaseT, _phaseScale;
-
+    float _phaseS, _phaseT;
     double _delay;
     double _prevTime;
 };
@@ -247,15 +245,19 @@ osg::ShapeDrawable* cube = new osg::ShapeDrawable(box ,hints);
 
 osg::StateSet* stateset = new osg::StateSet();
 	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	stateset->setMode(osg::StateAttribute::SCISSOR, osg::StateAttribute::ON);
 	osg::Image* image = new osg::Image();
 	 image = osgDB::readImageFile(imageFileName);
 	
     if (image)
     {
-	osg::Texture2D* texture = new osg::Texture2D;
+	osg::Texture2D* texture = new osg::Texture2D(image);
 	//texture->setTextureSize(5000000, 5000);
-	texture->setImage(image);
+	//texture->setImage(image);
+	texture->setWrap(osg::Texture::WrapParameter::WRAP_S, osg::Texture::WrapMode::REPEAT);
+	    osg::TexMat* texmat = new osg::TexMat;
 	stateset->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+	    stateset->setTextureAttributeAndModes(0, texmat, osg::StateAttribute::ON);
     }
     
     
@@ -305,6 +307,16 @@ osg::ref_ptr<osg::Geometry> cube = new osg::Geometry;
 float texWidth=1;
 float texHeight=1;
 	osg::Vec2Array* texcoords = new osg::Vec2Array(10);
+/*(*texcoords)[0].set(0.0f, 0.0f);
+(*texcoords)[1].set(texWidth/4, 0.0f);
+(*texcoords)[2].set(texWidth/4, texHeight);
+(*texcoords)[3].set(0.0f, texHeight);
+(*texcoords)[4].set(3*texWidth/4, 0.0f);
+(*texcoords)[5].set(texWidth/2, 0.0f);
+(*texcoords)[6].set(texWidth/2, texHeight);
+(*texcoords)[7].set(3*texWidth/4, texHeight);
+(*texcoords)[8].set(texWidth, 0);
+(*texcoords)[9].set(texWidth, texHeight);*/
 (*texcoords)[0].set(0.0f, 0.0f);
 (*texcoords)[1].set(texWidth/4, 0.0f);
 (*texcoords)[2].set(texWidth/4, texHeight);
@@ -337,7 +349,13 @@ cube->setStateSet( stateset );
 
 
     geode->addDrawable(cube.get());
-//   geode->setUpdateCallback(new TextureUpdateCallback(texmat));
+	osg::TexMat* texmat = (osg::TexMat*)(stateset->getTextureAttribute(0,osg::StateAttribute::Type::TEXMAT));
+	/*if(!texmat)
+	{
+exit(0);
+	}*/
+	
+   geode->setUpdateCallback(new TextureUpdateCallback(texmat));
 
     return geode;
 }
@@ -366,20 +384,21 @@ int main( int argc, char **argv )
 
 
 
-
+int border=false;
   int xoffset = 20;//1920;
     int yoffset = 20;
 	int width=300;//800;
 	int height=600;//1280;
+	
 
     // front
     {
         osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-        traits->x = xoffset + 0;
+        traits->x = xoffset + width*2;
         traits->y = yoffset + 0;
         traits->width = width;
         traits->height = height;
-        traits->windowDecoration = true;
+        traits->windowDecoration = border;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;
 
@@ -404,11 +423,11 @@ int main( int argc, char **argv )
     // back
     {
         osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-        traits->x = xoffset + width*2;
+        traits->x = xoffset + 0;
         traits->y = yoffset;
         traits->width = width;
         traits->height = height;
-        traits->windowDecoration = true;
+        traits->windowDecoration = border;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;
 
@@ -442,11 +461,11 @@ camTrans.makeTranslate(0.0,0.0,distance*2);
 	
  {
         osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-        traits->x = xoffset+width*3;
+        traits->x = xoffset+width;
         traits->y = yoffset;
         traits->width = width;
         traits->height = height;
-        traits->windowDecoration = true;
+        traits->windowDecoration = border;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;
 
@@ -488,11 +507,11 @@ camTrans2.makeTranslate(0.0,0.0,-1*distance);
 	
  {
         osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-        traits->x = xoffset+width;
+        traits->x = xoffset+3*width;
         traits->y = yoffset;
         traits->width = width;
         traits->height = height;
-        traits->windowDecoration = true;
+        traits->windowDecoration = border;
         traits->doubleBuffer = true;
         traits->sharedContext = 0;
 

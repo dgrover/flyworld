@@ -114,14 +114,14 @@ osg::StateSet* stateset = new osg::StateSet();
 
 
 	osg::ref_ptr<osg::DrawElementsUInt> indices = new osg::DrawElementsUInt(GL_TRIANGLES, 24);
-	(*indices) [0] = 0; (*indices) [1] = 1; (*indices) [2] = 2; //front
-	(*indices) [3] = 0; (*indices) [4] = 2; (*indices) [5] = 3; //front
-	(*indices) [6] = 8; (*indices) [7] = 9; (*indices) [8] = 7; //left
-	(*indices) [9] = 8; (*indices) [10] = 7; (*indices) [11] = 4; //left
-	(*indices) [12] = 4; (*indices) [13] = 7; (*indices) [14] = 6; //back
-	(*indices) [15] = 4; (*indices) [16] = 6; (*indices) [17] = 5; //back
-	(*indices) [18] = 5; (*indices) [19] = 6; (*indices) [20] = 2; //right
-	(*indices) [21] = 5; (*indices) [22] = 2; (*indices) [23] = 1;  //right
+	(*indices) [0] = 0; (*indices) [1] = 1; (*indices) [2] = 2; //front (LFB, RFB, RFT)
+	(*indices) [3] = 0; (*indices) [4] = 2; (*indices) [5] = 3; //front	(LFB, RFT, LFT)
+	(*indices) [6] = 8; (*indices) [7] = 9; (*indices) [8] = 7; //left	(LFB, LFT, LBT)
+	(*indices) [9] = 8; (*indices) [10] = 7; (*indices) [11] = 4; //left	(LFB, LBT, LBB)
+	(*indices) [12] = 4; (*indices) [13] = 7; (*indices) [14] = 6; //back	(LBB, LBT, RBT)
+	(*indices) [15] = 4; (*indices) [16] = 6; (*indices) [17] = 5; //back	(LBB, RBT, RBB)
+	(*indices) [18] = 5; (*indices) [19] = 6; (*indices) [20] = 2; //right	(RBB, RBT, RFT)
+	(*indices) [21] = 5; (*indices) [22] = 2; (*indices) [23] = 1;  //right	(RBB, RFT, RFB)
 
 
 osg::ref_ptr<osg::Geometry> cube = new osg::Geometry;
@@ -131,17 +131,17 @@ float texWidth=1;
 float texHeight=1;
 	osg::Vec2Array* texcoords = new osg::Vec2Array(10);
 
-(*texcoords)[0].set(0.0f, 0.0f);
-(*texcoords)[1].set(texWidth/4, 0.0f);
-(*texcoords)[2].set(texWidth/4, texHeight);
-(*texcoords)[3].set(0.0f, texHeight);
-(*texcoords)[4].set(3*texWidth/4, 0.0f);
-(*texcoords)[5].set(texWidth/2, 0.0f);
-(*texcoords)[6].set(texWidth/2, texHeight);
-(*texcoords)[7].set(3*texWidth/4, texHeight);
-(*texcoords)[8].set(texWidth, 0);
-(*texcoords)[9].set(texWidth, texHeight);
-///8///9
+(*texcoords)[0].set(0.0f, 0.0f);	//left front bottom of box
+(*texcoords)[1].set(texWidth/4, 0.0f);	//right front bottom
+(*texcoords)[2].set(texWidth/4, texHeight); //right front top
+(*texcoords)[3].set(0.0f, texHeight);	//left front top
+(*texcoords)[4].set(3*texWidth/4, 0.0f);	//left back bottom
+(*texcoords)[5].set(texWidth/2, 0.0f);	//right back bottom
+(*texcoords)[6].set(texWidth/2, texHeight);	//right back top
+(*texcoords)[7].set(3*texWidth/4, texHeight);	//left back top
+(*texcoords)[8].set(texWidth, 0);	//left front bottom
+(*texcoords)[9].set(texWidth, texHeight);	//left front top
+
 
 cube->setTexCoordArray(0, texcoords);
 
@@ -184,9 +184,9 @@ int main( int argc, char **argv )
 
 bool doubleBuf=true;
 bool border=false;
-  
-	int width=screenWidth/4;//800;
-	int height=screenHeight;//1280;
+
+	int width=screenWidth/4;
+	int height=screenHeight;
 	
 
     // front
@@ -238,9 +238,8 @@ osg::Matrixd camTrans;
 camRot.makeRotate(osg::DegreesToRadians(180.0), osg::Vec3(0,1,0));
 camTrans.makeTranslate(0.0,0.0,distance*2);
 
-//viewer.addSlave(camera.get(), osg::Matrixd(), osg::Matrixd::translate(0.0,0.0,distance*2));
+
 	viewer.addSlave(camera.get(), osg::Matrixd(),camTrans*camRot);
-	//viewer.addSlave(camera.get(), osg::Matrixd(),osg::Matrixd::rotate(osg::DegreesToRadians(180.0), osg::Vec3(0,1,0)).translate(0.0,0.0,distance*2));
     }
 
 
@@ -273,9 +272,7 @@ camTrans1.makeTranslate(0.0,0.0,distance);
 camRot.makeRotate(osg::DegreesToRadians(90.0), osg::Vec3(0,1,0));
 camTrans2.makeTranslate(0.0,0.0,-1*distance);
 
-//viewer.addSlave(camera.get(), osg::Matrixd(), osg::Matrixd::translate(0.0,0.0,distance*2));
-	viewer.addSlave(camera.get(), osg::Matrixd(),camTrans1*camRot*camTrans2);
-	//viewer.addSlave(camera.get(), osg::Matrixd(),osg::Matrixd::rotate(osg::DegreesToRadians(180.0), osg::Vec3(0,1,0)).translate(0.0,0.0,distance*2));
+	viewer.addSlave(camera.get(), osg::Matrixd(),camTrans1*camRot*camTrans2);;
     }
 
 

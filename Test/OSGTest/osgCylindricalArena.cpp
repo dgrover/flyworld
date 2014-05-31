@@ -100,7 +100,7 @@ osg::Geode* createShapes()
 	capsule->setColor(osg::Vec4(0,0,1,1));
 
 	osg::ShapeDrawable* sphere = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,-1.0f,0.0f),radius/10),hints);
-	sphere->setColor(osg::Vec4(0,1,1,1));
+	sphere->setColor(osg::Vec4(0,1,1,1));  
 
 	//geode->addDrawable(sphere);
 	geode->addDrawable(box);
@@ -121,7 +121,7 @@ int main( int argc, char **argv )
 	// add model to viewer.
 	viewer.setSceneData( root );
 	viewer.getCamera()->setClearColor(backgroundColor);
-	viewer.setCameraManipulator(new osgGA::TrackballManipulator);
+	viewer.setCameraManipulator(new osgGA::FlightManipulator);
 	//starting position for manipulator
 	viewer.getCameraManipulator()->setHomePosition(osg::Vec3d(0,0,0), osg::Vec3d(1,1,0), osg::Vec3d(0,0,1), false); //eye, center, up
 	

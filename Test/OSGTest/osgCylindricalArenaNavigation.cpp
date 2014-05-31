@@ -262,9 +262,10 @@ osg::Matrixd cameraTrans;
           osg::DegreesToRadians( 0.0), osg::Vec3(0,0,1) ); // roll*/
 
 cameraRotation.makeRotate(
+
 			osg::DegreesToRadians(rotationNumbers[index]), osg::Vec3(0,1,0), // heading
-          osg::DegreesToRadians(rotationNumbers[index+1]), osg::Vec3(1,0,0) , // pitch
-          osg::DegreesToRadians( rotationNumbers[index+2]), osg::Vec3(0,0,1) ); // roll
+          osg::DegreesToRadians(rotationNumbers[index+1]*0), osg::Vec3(1,0,0) , // pitch
+          osg::DegreesToRadians( rotationNumbers[index+2]*0), osg::Vec3(0,0,1) ); // roll
 
  cameraTrans.makeTranslate( 0,0,translationNumbers[index]*2 );
 
@@ -297,7 +298,7 @@ viewer.getCamera()->setViewMatrix(currentView*cameraRotation);
 if(bb.contains(camEye))
 {
 viewer.getCamera()->setViewMatrix(currentView*cameraRotation);
-break;
+//break;
 }
 
 //viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc,0,camVertLoc), osg::Vec3d(camHorLoc,depth,camVertLoc), up);

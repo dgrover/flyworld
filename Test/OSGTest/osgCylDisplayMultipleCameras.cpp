@@ -295,7 +295,7 @@ int main( int argc, char **argv )
 
 
 
-  int xoffset = 1920;
+  int xoffset =0;// 1920;
     int yoffset = 0;
 	int width=800;
 	int height=1280;

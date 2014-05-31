@@ -12,9 +12,9 @@
 #include <osg/Texture2D>
 #include <osg/Math>
 
-double screenHeight=/*1280;*/1200;//768;
-double screenWidth=/*800*4;*/1920;//1366;
-double xoffset = 0;//1920;//0
+double screenHeight=1280;//1200;//768;
+double screenWidth=800*4;//1920;//1366;
+double xoffset = 1920;//0
 double yoffset = 0;
 
 

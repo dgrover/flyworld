@@ -19,7 +19,7 @@
 //#include <osgSim>
 
 double imageWidth=800;
-double imageHeight=1280;
+double imageHeight=1580;
 
 double fovy=30;
 
@@ -42,7 +42,7 @@ double camVertLoc=0;
 double distance=13.5;
 osg::Vec3d up=osg::Vec3d(0,0,1); //up vector
 
-std::string imageFileName="verticalLine.jpg";
+std::string imageFileName="vert_stripe.bmp";
 
 //	setViewMatrixAsLookAt(osg::Vec3d(move,distance,camVertLoc+yS*currTime), osg::Vec3d(move,0.0,camVertLoc+yS*currTime), up);
 
@@ -295,10 +295,10 @@ int main( int argc, char **argv )
 
 
 
-  int xoffset =0;// 1920;
-    int yoffset = 0;
+  int xoffset = 1920;
+    int yoffset = -150;
 	int width=800;
-	int height=1280;
+	int height=1580; /////
 
     // front
     {

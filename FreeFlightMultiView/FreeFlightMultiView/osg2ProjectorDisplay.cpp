@@ -5,16 +5,16 @@
 #include <osg/ShapeDrawable>
 #include <osg/Texture2D>
 
-double screenHeight=1200;
-double screenWidth=1920;
-double xoffset = 0;//1920;
+double screenHeight=800;//768;//1200;
+double screenWidth=2560;//1366;//1920;
+double xoffset = 1920;
 double yoffset = 0;
 double depth=0;
 double camHorLoc=0;
 double camVertLoc=0;
 double distance=1;
 osg::Vec3d up=osg::Vec3d(0,0,1); //up vector
-std::string imageFileName="numberline.gif";
+std::string imageFileName="vert_stripes_40pix.bmp";
 double transRate=0.3;
 //2560*800
 

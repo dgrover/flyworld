@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="osgCylindricalDisplay"
+	Name="FlyCAVE"
 	ProjectGUID="{FC68D995-E3A5-45A4-B753-10DC406B8366}"
 	RootNamespace="OSGTest"
 	Keyword="Win32Proj"
@@ -450,7 +450,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OpenThreads.lib osg.lib osgAnimation.lib osgDB.lib osgFX.lib osgGA.lib osgManipulator.lib osgParticle.lib osgShadow.lib osgPresentation.lib osgSim.lib osgTerrain.lib osgText.lib osgUtil.lib osgViewer.lib osgVolume.lib osgWidget.lib"
+				AdditionalDependencies="osg.lib osgDB.lib osgViewer.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -491,7 +491,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\osgCylDisplayMultipleCameras.cpp"
+				RelativePath=".\osgCylindricalArenaNavigation.cpp"
 				>
 			</File>
 		</Filter>

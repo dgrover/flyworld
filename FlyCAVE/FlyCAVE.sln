@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osgCylindricalDisplay", "OSGTest\OSGTest.vcproj", "{FC68D995-E3A5-45A4-B753-10DC406B8366}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osgCylindricalDisplay", "FlyCAVE\FlyCAVE.vcproj", "{FC68D995-E3A5-45A4-B753-10DC406B8366}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

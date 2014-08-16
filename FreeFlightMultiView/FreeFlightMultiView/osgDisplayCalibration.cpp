@@ -4,18 +4,22 @@
 #include <osg/ShapeDrawable>
 #include <osg/Texture2D>
 #include <osgGA/GUIEventHandler>
+#include <stdio.h>
+//#include <iostream>
 
-
-double imageWidth=1366;//800;
-double imageHeight=768;//1580;
-int xoffset = 0;//;1920;
-int yoffset = 0;//-150;
-int width=imageWidth/4;//800;
-int height=imageHeight;//1580;
+double imageWidth=800*4;//1920;//5120;
+double imageHeight=1280;//1200;//800;
+int xoffset =1920;
+int yoffset = 0;
+int width=imageWidth/4;
+int height=imageHeight;
 
 double camHorLoc=0;
 double camVertLoc=0;
-double distance=13.5;
+
+float cradius = (7.5/2.0);// * 1280.0/800.0; ///7.5 diameter
+float cheight = 8.0;// * 800.0/1280.0;//3.6; //8 height
+double distance=cradius + 10.5;//14;//;
 
 
 int slaveNum=0;
@@ -26,13 +30,22 @@ float transInc=0.1;
 float rotInc=1;
 
 
-osg::Matrixd cam1View=osg::Matrixd();
+osg::Matrixd cam1StartingView;
+osg::Matrixd cam2StartingView;
+osg::Matrixd cam3StartingView;
+osg::Matrixd cam4StartingView;
 
-osg::Matrixd cam2View=osg::Matrixd::translate(0.0, 0.0, distance)*osg::Matrixd::rotate(osg::DegreesToRadians(-90.0), osg::Vec3(0,1,0))*osg::Matrixd::translate(0.0, 0.0, -1*distance);
-osg::Matrixd cam3View=osg::Matrixd::translate(0.0, 0.0, distance*2)*osg::Matrixd::rotate(osg::DegreesToRadians(180.0), osg::Vec3(0,1,0));
-osg::Matrixd cam4View=osg::Matrixd::translate(0.0, 0.0, distance)*osg::Matrixd::rotate(osg::DegreesToRadians(90.0), osg::Vec3(0,1,0))*osg::Matrixd::translate(0.0, 0.0, -1*distance);
+
+osg::Matrixd cam1DefaultView=osg::Matrixd();
+osg::Matrixd cam2DefaultView=osg::Matrixd::translate(0.0, 0.0, distance)*osg::Matrixd::rotate(osg::DegreesToRadians(-90.0), osg::Vec3(0,1,0))*osg::Matrixd::translate(0.0, 0.0, -1*distance);
+osg::Matrixd cam3DefaultView=osg::Matrixd::translate(0.0, 0.0, distance*2)*osg::Matrixd::rotate(osg::DegreesToRadians(180.0), osg::Vec3(0,1,0));
+osg::Matrixd cam4DefaultView=osg::Matrixd::translate(0.0, 0.0, distance)*osg::Matrixd::rotate(osg::DegreesToRadians(90.0), osg::Vec3(0,1,0))*osg::Matrixd::translate(0.0, 0.0, -1*distance);
 
 
+osg::Matrixd cam1View;
+osg::Matrixd cam2View;
+osg::Matrixd cam3View;
+osg::Matrixd cam4View;
 
 
 osg::Matrixd transZforward = osg::Matrixd::translate(0.0,0.0,transInc);
@@ -52,9 +65,15 @@ double depth=0;
 double rS= 0.1; //rotation speed
 
 osg::Vec3d up=osg::Vec3d(0,0,1); //up vector
+const char* imageFileName="..//..//images//numberline.gif";//"vert_stripe.bmp";
+const char* displayFile="..//..//files//displaySettings.txt";
 
-std::string imageFileName="numberline.gif";//"vert_stripe.bmp";
 
+osgViewer::Viewer viewer;
+
+
+void printInfo(int cam);
+void setStartingViews();
 
 
 class keyboardHandler : public osgGA::GUIEventHandler
@@ -145,6 +164,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 
 				break;
+
 			case 's':
 				if(slaveNum==0 || slaveNum==1)
 				{
@@ -203,6 +223,48 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				break;
 
+			case ' ':
+				if(slaveNum==0 || slaveNum==1)
+				{
+					cam1View=cam1StartingView;
+				}
+				if(slaveNum==0 || slaveNum==2)
+				{
+					cam2View=cam2StartingView;
+				}
+				if(slaveNum==0 || slaveNum==3)
+				{
+					cam3View=cam3StartingView;
+				}
+				if(slaveNum==0 || slaveNum==4)
+				{
+					cam4View=cam4StartingView;
+				}
+				break;
+
+			case 'l':
+				if(slaveNum==0 || slaveNum==1)
+				{
+					cam1View=cam1DefaultView;
+				}
+				if(slaveNum==0 || slaveNum==2)
+				{
+					cam2View=cam2DefaultView;
+				}
+				if(slaveNum==0 || slaveNum==3)
+				{
+					cam3View=cam3DefaultView;
+				}
+				if(slaveNum==0 || slaveNum==4)
+				{
+					cam4View=cam4DefaultView;
+				}
+				break;
+
+			case 'p':
+				printInfo(slaveNum);
+				break;
+
 			default:
 				return false;
 			} 
@@ -216,79 +278,61 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
 class GeodeUpdateCallback : public osg::NodeCallback 
 { 
 public : 
 
-	void operator()( osg::Node * node , osg::NodeVisitor * nv) 
-	{ 
-		double currTime;
-		if (nv->getFrameStamp())
-		{
-			currTime= nv->getFrameStamp()->getSimulationTime();
-		}
-		osg::Vec3f* rotationVec=new osg::Vec3(0,0,1);
-		osg::Quat* quat = new osg::Quat(rS*diam*currTime, *rotationVec);
+void operator()( osg::Node * node , osg::NodeVisitor * nv) 
+{ 
+double currTime;
+if (nv->getFrameStamp())
+{
+currTime= nv->getFrameStamp()->getSimulationTime();
+}
+osg::Vec3f* rotationVec=new osg::Vec3(0,0,1);
+osg::Quat* quat = new osg::Quat(rS*diam*currTime, *rotationVec);
 
 
-		osg::Geode * geode = dynamic_cast< osg::Geode * >( node ); 
-		osg::Drawable* drawable = geode->getDrawable(0);
-		//osg::ShapeDrawable * geom = dynamic_cast< osg::ShapeDrawable * >( node ) ; 
+osg::Geode * geode = dynamic_cast< osg::Geode * >( node ); 
+osg::Drawable* drawable = geode->getDrawable(0);
+//osg::ShapeDrawable * geom = dynamic_cast< osg::ShapeDrawable * >( node ) ; 
 
-		osg::Shape* cyl = ((osg::ShapeDrawable*) drawable)->getShape();
-		((osg::Cylinder*)cyl)->setRotation(*quat);
-		((osg::ShapeDrawable*) drawable)->setShape(cyl);
+osg::Shape* cyl = ((osg::ShapeDrawable*) drawable)->getShape();
+((osg::Cylinder*)cyl)->setRotation(*quat);
+((osg::ShapeDrawable*) drawable)->setShape(cyl);
 
 
-	} 
+} 
 }; 
-
-
-
 
 
 class TextureUpdateCallback : public osg::NodeCallback
 {
 private:
-	osg::TexMat* texMat;
+osg::TexMat* texMat;
 public:
-	TextureUpdateCallback(osg::TexMat* tm)
-	{
-		texMat=tm;
-	}
+TextureUpdateCallback(osg::TexMat* tm)
+{
+texMat=tm;
+}
 
-	virtual void operator()(osg::Node*, osg::NodeVisitor* nv)
-	{
-		if (!texMat)
-		{
-			return;
-		}
+virtual void operator()(osg::Node*, osg::NodeVisitor* nv)
+{
+if (!texMat)
+{
+return;
+}
 
-		if (nv->getFrameStamp())
-		{
-			double currTime = nv->getFrameStamp()->getSimulationTime();
-			float s=currTime*rS;
-			texMat->setMatrix(osg::Matrix::translate(s,0.0,0.0));
-		}
-	}
+if (nv->getFrameStamp())
+{
+double currTime = nv->getFrameStamp()->getSimulationTime();
+float s=currTime*rS;
+texMat->setMatrix(osg::Matrix::translate(s,0.0,0.0));
+}
+}
 };
-
-
-
+*/
 
 
 
@@ -315,8 +359,6 @@ osg::Geode* createShapes()
 	geode->setStateSet( stateset );
 	geode->setCullingActive(false);
 
-	float radius = 3;//5; //0.8f;
-	float height = 3.8;//3.6; //5.02654824574*8/12;
 
 	osg::TessellationHints* hints = new osg::TessellationHints;
 	hints->setDetailRatio(0.8f);
@@ -328,10 +370,10 @@ osg::Geode* createShapes()
 	hints->setCreateTop(false);
 	hints->setCreateBottom(false);
 	osg::Vec3f* rotationVec=new osg::Vec3(0,0,1);
-	osg::Quat* quat = new osg::Quat(30, *rotationVec);
-	osg::Cylinder* cyl = new osg::Cylinder(osg::Vec3(0.0f,0.0f,0.0f),radius,height);
+	osg::Quat* quat = new osg::Quat(180, *rotationVec);
+	osg::Cylinder* cyl = new osg::Cylinder(osg::Vec3(0.0f,0.0f,0.0f),cradius,cheight);
 	cyl->setRotation(*quat);
-	osg::ShapeDrawable* cylinder = new osg::ShapeDrawable(cyl ,hints);
+	osg::ShapeDrawable* cylinder = new osg::ShapeDrawable(cyl,hints);
 	cylinder->setUseDisplayList(false);
 	geode->addDrawable(cylinder);
 
@@ -342,10 +384,95 @@ osg::Geode* createShapes()
 	return geode;
 }
 
+void printInfo(int cam)
+{
+	osg::Quat::value_type  angle=* new osg::Quat::value_type();
+	osg::Quat::value_type  rotVecX=* new osg::Quat::value_type();
+	osg::Quat::value_type  rotVecY=* new osg::Quat::value_type();
+	osg::Quat::value_type  rotVecZ=* new osg::Quat::value_type();
+	printf("**********\n");
+
+	for(int i=0; i<4; i++)
+	{
+		if(cam==0 || cam==i+1)
+		{
+			printf("Camera %i X Position: %f\n", i+1, viewer.getSlave(i)._viewOffset.getTrans().x());
+			printf("Camera %i Z Position: %f\n", i+1, viewer.getSlave(i)._viewOffset.getTrans().z());
+			viewer.getSlave(i)._viewOffset.getRotate().getRotate(angle, rotVecX, rotVecY, rotVecZ);
+			printf("Camera %i Rotation: %f\n", i+1, osg::RadiansToDegrees(angle));
+			printf("Camera %i Rotation Vector X: %f\n", i+1, rotVecX);
+			printf("Camera %i Rotation Vector Y: %f\n", i+1, rotVecY);
+			printf("Camera %i Rotation Vector Z: %f\n", i+1, rotVecZ);
+			printf("\n");
+		}
+	}
+	printf("**********\n\n");
+}
+
+
+void writeInfo()
+{
+	osg::Quat::value_type  angle=* new osg::Quat::value_type();
+	osg::Quat::value_type  rotVecX=* new osg::Quat::value_type();
+	osg::Quat::value_type  rotVecY=* new osg::Quat::value_type();
+	osg::Quat::value_type  rotVecZ=* new osg::Quat::value_type();
+	FILE * file= fopen(displayFile, "w");
+
+	for(int i=0; i<4; i++)
+	{
+		fprintf(file, "%f\n", viewer.getSlave(i)._viewOffset.getTrans().x());
+		fprintf(file, "%f\n", viewer.getSlave(i)._viewOffset.getTrans().z());
+		viewer.getSlave(i)._viewOffset.getRotate().getRotate(angle, rotVecX, rotVecY, rotVecZ);
+		fprintf(file, "%f\n", osg::RadiansToDegrees(angle));
+		fprintf(file, "%f\n", rotVecX);
+		fprintf(file, "%f\n", rotVecY);
+		fprintf(file, "%f\n", rotVecZ);
+	}
+
+	fclose(file);
+}
+
+void setStartingViews()
+{
+	float number;
+	std::vector<float> numbers;
+	std::ifstream file(displayFile, std::ios::in);
+
+	if(file.is_open())
+	{
+		printf("open");
+		while (file >> number) 
+		{
+		numbers.push_back(number);	
+		}
+		file.close();
+
+for(int i=0; i<24; i++)
+{
+printf("%f\n", numbers[i]);
+}
+
+cam1StartingView=osg::Matrixd::translate(numbers[0], 0.0, -1*numbers[1])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[2]), osg::Vec3d(numbers[3],numbers[4],numbers[5]));
+cam2StartingView=osg::Matrixd::translate(-1*numbers[6], 0.0, numbers[7])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[8]), osg::Vec3d(numbers[9],numbers[10],numbers[11]));
+cam3StartingView=osg::Matrixd::translate(numbers[12], 0.0, -1*numbers[13])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[14]), osg::Vec3d(numbers[15],numbers[16],numbers[17]));
+cam4StartingView=osg::Matrixd::translate(-1*numbers[18], 0.0, numbers[19])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[20]), osg::Vec3d(numbers[21],numbers[22],numbers[23]));
+
+
+				
+	}
+	else
+	{
+		cam1StartingView=cam1DefaultView;
+		cam2StartingView=cam2DefaultView;
+		cam3StartingView=cam3DefaultView;
+		cam4StartingView=cam4DefaultView;
+	}
+}
+
+
+
 int main( int argc, char **argv )
 {
-	osgViewer::Viewer viewer;
-
 
 	osg::Group* root = new osg::Group;
 	root->addChild( createShapes() );
@@ -353,6 +480,12 @@ int main( int argc, char **argv )
 
 	viewer.setSceneData( root );
 
+	setStartingViews();
+
+	cam1View=cam1StartingView;
+	cam2View=cam2StartingView;
+	cam3View=cam3StartingView;
+	cam4View=cam4StartingView;
 
 
 	// front
@@ -452,24 +585,11 @@ int main( int argc, char **argv )
 
 
 
-
-
-
-
-
-
-
 	keyboardHandler* handler = new keyboardHandler();
-
 	viewer.addEventHandler(handler); 
-
-
 	viewer.getCamera()->setClearColor(backgroundColor); // black background
-
 	viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc,distance,camVertLoc), osg::Vec3d(camHorLoc,depth,camVertLoc), up);
-
-
-
+	viewer.getCamera()->setProjectionMatrixAsPerspective(40.0, ((double)width)/((double)height), 0.1, 5);
 	viewer.setCameraManipulator(NULL);
 
 	while(!viewer.done())
@@ -482,16 +602,7 @@ int main( int argc, char **argv )
 		viewer.frame();
 	}
 
-	
-	osg::Quat::value_type  angle=* new osg::Quat::value_type();
-	for(int i=0; i<4; i++)
-	{
-	printf("Camera %i X Position: %f\n", i+1, viewer.getSlave(i)._viewOffset.getTrans().x());
-	printf("Camera %i Z Position: %f\n", i+1, viewer.getSlave(i)._viewOffset.getTrans().z());
-viewer.getSlave(i)._viewOffset.getRotate().getRotate(angle, * new osg::Quat::value_type(),* new osg::Quat::value_type(),* new osg::Quat::value_type());
-printf("Camera %i Rotation: %f\n", i+1, osg::RadiansToDegrees(angle));
-	}
-
-
+	printInfo(0);
+	writeInfo();
 	return 0;
 }

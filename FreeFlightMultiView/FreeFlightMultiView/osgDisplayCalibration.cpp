@@ -5,7 +5,6 @@
 #include <osg/Texture2D>
 #include <osgGA/GUIEventHandler>
 #include <stdio.h>
-//#include <iostream>
 
 double imageWidth=800*4;//1920;//5120;
 double imageHeight=1280;//1200;//800;
@@ -65,7 +64,7 @@ double depth=0;
 double rS= 0.1; //rotation speed
 
 osg::Vec3d up=osg::Vec3d(0,0,1); //up vector
-const char* imageFileName="..//..//images//numberline.gif";//"vert_stripe.bmp";
+const char* imageFileName="..//..//images//lines.png";//"..//..//images//numberline.gif";//"vert_stripe.bmp";
 const char* displayFile="..//..//files//displaySettings.txt";
 
 
@@ -107,6 +106,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				break;
 
 			case 'a':
+			case 'A':
 				if(slaveNum==0 || slaveNum==1)
 				{
 					cam1View=cam1View*transXleft;
@@ -126,6 +126,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				break;
 
 			case 'd':
+			case 'D':
 				if(slaveNum==0 || slaveNum==1)
 				{
 					cam1View=cam1View*transXright;
@@ -146,6 +147,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				break;
 
 			case 'w':
+			case 'W':
 				if(slaveNum==0 || slaveNum==1)
 				{
 					cam1View=cam1View*transZforward;
@@ -166,6 +168,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				break;
 
 			case 's':
+			case 'S':
 				if(slaveNum==0 || slaveNum==1)
 				{
 					cam1View=cam1View*transZbackward;
@@ -185,6 +188,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				break;
 
 			case 'q':
+			case 'Q':
 				if(slaveNum==0 || slaveNum==1)
 				{
 					cam1View=cam1View*rotccw;
@@ -205,6 +209,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 
 
 			case 'e':
+			case 'E':
 				if(slaveNum==0 || slaveNum==1)
 				{
 					cam1View=cam1View*rotcw;
@@ -242,7 +247,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				break;
 
-			case 'l':
+			case '.':
 				if(slaveNum==0 || slaveNum==1)
 				{
 					cam1View=cam1DefaultView;
@@ -261,52 +266,77 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				break;
 
+			case '+':
+				transInc=transInc*2.0;
+				rotInc=rotInc*2.0;
+				transZforward = osg::Matrixd::translate(0.0,0.0,transInc);
+				transZbackward = osg::Matrixd::translate(0.0,0.0,transInc*-1);
+				transXleft = osg::Matrixd::translate(transInc,0.0,0.0); //trans cam left
+				transXright = osg::Matrixd::translate(transInc*-1,0.0,0.0);
+				rotcw = osg::Matrixd::rotate(osg::DegreesToRadians(rotInc), osg::Vec3(0,1,0)); //rotate camera clockwise
+				rotccw = osg::Matrixd::rotate(osg::DegreesToRadians(rotInc*-1), osg::Vec3(0,1,0));
+				break;
+
+			case '-':
+				transInc=transInc/2.0;
+				rotInc=rotInc/2.0;
+				transZforward = osg::Matrixd::translate(0.0,0.0,transInc);
+				transZbackward = osg::Matrixd::translate(0.0,0.0,transInc*-1);
+				transXleft = osg::Matrixd::translate(transInc,0.0,0.0); //trans cam left
+				transXright = osg::Matrixd::translate(transInc*-1,0.0,0.0);
+				rotcw = osg::Matrixd::rotate(osg::DegreesToRadians(rotInc), osg::Vec3(0,1,0)); //rotate camera clockwise
+				rotccw = osg::Matrixd::rotate(osg::DegreesToRadians(rotInc*-1), osg::Vec3(0,1,0));
+				break;
+
 			case 'p':
+			case 'P':
 				printInfo(slaveNum);
 				break;
 
 			default:
 				return false;
+				break;
 			} 
 			return true;
 		}
 	default:
 		return false;
+		break;
 	}
 }
 
 
 
 
-/*
+
 class GeodeUpdateCallback : public osg::NodeCallback 
 { 
 public : 
 
-void operator()( osg::Node * node , osg::NodeVisitor * nv) 
-{ 
-double currTime;
-if (nv->getFrameStamp())
-{
-currTime= nv->getFrameStamp()->getSimulationTime();
-}
-osg::Vec3f* rotationVec=new osg::Vec3(0,0,1);
-osg::Quat* quat = new osg::Quat(rS*diam*currTime, *rotationVec);
+	void operator()( osg::Node * node , osg::NodeVisitor * nv) 
+	{ 
+		double currTime;
+		if (nv->getFrameStamp())
+		{
+			currTime= nv->getFrameStamp()->getSimulationTime();
+		}
+		osg::Vec3f* rotationVec=new osg::Vec3(0,0,1);
+		osg::Quat* quat = new osg::Quat(rS*diam*currTime, *rotationVec);
 
 
-osg::Geode * geode = dynamic_cast< osg::Geode * >( node ); 
-osg::Drawable* drawable = geode->getDrawable(0);
-//osg::ShapeDrawable * geom = dynamic_cast< osg::ShapeDrawable * >( node ) ; 
+		osg::Geode * geode = dynamic_cast< osg::Geode * >( node ); 
+		osg::Drawable* drawable = geode->getDrawable(0);
+		//osg::ShapeDrawable * geom = dynamic_cast< osg::ShapeDrawable * >( node ) ; 
 
-osg::Shape* cyl = ((osg::ShapeDrawable*) drawable)->getShape();
-((osg::Cylinder*)cyl)->setRotation(*quat);
-((osg::ShapeDrawable*) drawable)->setShape(cyl);
+		osg::Shape* cyl = ((osg::ShapeDrawable*) drawable)->getShape();
+		((osg::Cylinder*)cyl)->setRotation(*quat);
+		((osg::ShapeDrawable*) drawable)->setShape(cyl);
 
 
-} 
+	} 
 }; 
 
-
+/*
 class TextureUpdateCallback : public osg::NodeCallback
 {
 private:
@@ -377,7 +407,7 @@ osg::Geode* createShapes()
 	cylinder->setUseDisplayList(false);
 	geode->addDrawable(cylinder);
 
-	//    geode->setUpdateCallback(new GeodeUpdateCallback());
+	//geode->setUpdateCallback(new GeodeUpdateCallback());
 
 	//osg::TexMat* texmat = (osg::TexMat*)(stateset->getTextureAttribute(0,osg::StateAttribute::TEXMAT));	
 	//geode->setUpdateCallback(new TextureUpdateCallback(texmat));
@@ -440,25 +470,32 @@ void setStartingViews()
 
 	if(file.is_open())
 	{
-		printf("open");
 		while (file >> number) 
 		{
-		numbers.push_back(number);	
+			numbers.push_back(number);	
 		}
+
 		file.close();
 
-for(int i=0; i<24; i++)
-{
-printf("%f\n", numbers[i]);
-}
+		osg::Matrixd m1, m2, m3, m4;
+		m1.setTrans(numbers[0], 0.0, numbers[1]);
+		m1.setRotate(osg::Quat(osg::DegreesToRadians(numbers[2]), osg::Vec3d(numbers[3], numbers[4], numbers[5]))); 
+		m2.setTrans(numbers[6], 0.0, numbers[7]);
+		m2.setRotate(osg::Quat(osg::DegreesToRadians(numbers[8]), osg::Vec3d(numbers[9], numbers[10], numbers[11]))); 
+		m3.setTrans(numbers[12], 0.0, numbers[13]);
+		m3.setRotate(osg::Quat(osg::DegreesToRadians(numbers[14]), osg::Vec3d(numbers[15], numbers[16], numbers[17]))); 
+		m4.setTrans(numbers[18], 0.0, numbers[19]);
+		m4.setRotate(osg::Quat(osg::DegreesToRadians(numbers[20]), osg::Vec3d(numbers[21], numbers[22], numbers[23]))); 
 
-cam1StartingView=osg::Matrixd::translate(numbers[0], 0.0, -1*numbers[1])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[2]), osg::Vec3d(numbers[3],numbers[4],numbers[5]));
-cam2StartingView=osg::Matrixd::translate(-1*numbers[6], 0.0, numbers[7])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[8]), osg::Vec3d(numbers[9],numbers[10],numbers[11]));
-cam3StartingView=osg::Matrixd::translate(numbers[12], 0.0, -1*numbers[13])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[14]), osg::Vec3d(numbers[15],numbers[16],numbers[17]));
-cam4StartingView=osg::Matrixd::translate(-1*numbers[18], 0.0, numbers[19])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[20]), osg::Vec3d(numbers[21],numbers[22],numbers[23]));
+		cam1StartingView=m1;
+		cam2StartingView=m2;
+		cam3StartingView=m3;
+		cam4StartingView=m4;
 
-
-				
+		//cam1StartingView=osg::Matrixd::translate(numbers[0], 0.0, -1*numbers[1])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[2]), osg::Vec3d(numbers[3],numbers[4],numbers[5]));
+		//cam2StartingView=osg::Matrixd::translate(-1*numbers[6], 0.0, numbers[7])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[8]), osg::Vec3d(numbers[9],numbers[10],numbers[11]));
+		//cam3StartingView=osg::Matrixd::translate(numbers[12], 0.0, -1*numbers[13])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[14]), osg::Vec3d(numbers[15],numbers[16],numbers[17]));
+		//cam4StartingView=osg::Matrixd::translate(-1*numbers[18], 0.0, numbers[19])*osg::Matrixd::rotate(osg::DegreesToRadians(numbers[20]), osg::Vec3d(numbers[21],numbers[22],numbers[23]));
 	}
 	else
 	{

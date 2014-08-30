@@ -285,7 +285,7 @@
 				AdditionalDependencies="OpenThreads.lib osg.lib osgAnimation.lib osgDB.lib osgFX.lib osgGA.lib osgManipulator.lib osgParticle.lib osgShadow.lib osgPresentation.lib osgSim.lib osgTerrain.lib osgText.lib osgUtil.lib osgViewer.lib osgVolume.lib osgWidget.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				EntryPointSymbol="mainCRTStartup"
@@ -323,7 +323,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\osg2ProjectorDisplay.cpp"
+				RelativePath=".\osgDisplayCalibration.cpp"
 				>
 			</File>
 		</Filter>

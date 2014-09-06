@@ -1,4 +1,4 @@
-flyCAVE
+flyVR
 =======
 
-virtual reality environment for fruit flies
+virtual reality display for fruit fly tethered and free behavior rigs

@@ -6,9 +6,9 @@
 #include <osgGA/GUIEventHandler>
 #include <stdio.h>
 
-double imageWidth=1366;//1280;//1920;//5120;
-double imageHeight=768;//800;//1200;//800;
-int xoffset =0;//1366;//1920;
+double imageWidth = 912;//1366;//1280;//1920;//5120;
+double imageHeight = 1140;//768;//800;//1200;//800;
+int xoffset = 1920; // 0;//1366;
 int yoffset = 0;
 int width=imageWidth;
 int height=imageHeight;
@@ -61,11 +61,12 @@ osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1);
 double diam=3.14159*2;
 double depth=0;
 
-double rS= 0.1; //rotation speed
+double rS = -1.0/2.5; //rotation speed
+double inc = 0.1;
 
 osg::Vec3d up=osg::Vec3d(0,0,1); //up vector
-const char* imageFileName="color2.jpg";//"verticalLine.jpg";//"vert_stripe.bmp";//"lines.png";//"..//..//images//numberline.gif";//;
-const char* displayFile="displaySettings.txt";
+const char* imageFileName = "..//..//images//vert_stripe.bmp";//"..//..//images//color2.jpg";//"verticalLine.jpg";//"vert_stripe.bmp";//"lines.png";//"..//..//images//numberline.gif";//;
+const char* displayFile="..//..//files//displaySettings.txt";
 
 
 osgViewer::Viewer viewer;
@@ -104,7 +105,24 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 			/*case '4':
 				slaveNum=4;
 				break;
+
 */
+
+
+			case '[':
+			
+				rS -= 0.1;
+				break;
+
+			case ']':
+			
+				rS += 0.1;
+				break;
+
+			case ';':
+			
+				rS = rS*-1.0;
+				break;
 			case 'a':
 			case 'A':
 				if(slaveNum==0 || slaveNum==1)
@@ -267,6 +285,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				break;
 
 			case '+':
+				inc = inc*2.0;
 				transInc=transInc*2.0;
 				rotInc=rotInc*2.0;
 				transZforward = osg::Matrixd::translate(0.0,0.0,transInc);
@@ -278,6 +297,7 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				break;
 
 			case '-':
+				inc = inc / 2.0;
 				transInc=transInc/2.0;
 				rotInc=rotInc/2.0;
 				transZforward = osg::Matrixd::translate(0.0,0.0,transInc);

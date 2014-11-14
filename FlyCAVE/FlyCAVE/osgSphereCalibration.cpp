@@ -17,7 +17,6 @@ double camHorLoc=0;
 double camVertLoc=0;
 
 float cradius = (7.5/2.0);// * 1280.0/800.0; ///7.5 diameter
-//float cheight = 8.0;// * 800.0/1280.0;//3.6; //8 height
 double distance=cradius + 10.5;//14;//;
 
 
@@ -61,6 +60,7 @@ osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1);
 double diam=3.14159*2;
 double depth=0;
 
+double scaleRate = 0.4;
 double rS = -1.0/2.5; //rotation speed
 double inc = 0.1;
 
@@ -96,33 +96,34 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 			case '1':
 				slaveNum=1;
 				break;
-			/*case '2':
+				/*case '2':
 				slaveNum=2;
 				break;
-			case '3':
+				case '3':
 				slaveNum=3;
 				break;*/
-			/*case '4':
+				/*case '4':
 				slaveNum=4;
 				break;
 
-*/
+				*/
 
 
 			case '[':
-			
 				rS -= 0.1;
+				scaleRate-=0.1;
 				break;
 
 			case ']':
-			
 				rS += 0.1;
+				scaleRate+=0.1;
 				break;
 
 			case ';':
-			
 				rS = rS*-1.0;
+				//scaleRate=scaleRate*-1.0;
 				break;
+				
 			case 'a':
 			case 'A':
 				if(slaveNum==0 || slaveNum==1)
@@ -131,15 +132,15 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				/*if(slaveNum==0 || slaveNum==2)
 				{
-					cam2View=cam2View*transXleft;
+				cam2View=cam2View*transXleft;
 				}
 				if(slaveNum==0 || slaveNum==3)
 				{
-					cam3View=cam3View*transXleft;
+				cam3View=cam3View*transXleft;
 				}*/
 				/*if(slaveNum==0 || slaveNum==4)
 				{
-					cam4View=cam4View*transXleft;
+				cam4View=cam4View*transXleft;
 				}*/
 				break;
 
@@ -151,15 +152,15 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				/*if(slaveNum==0 || slaveNum==2)
 				{
-					cam2View=cam2View*transXright;
+				cam2View=cam2View*transXright;
 				}
 				if(slaveNum==0 || slaveNum==3)
 				{
-					cam3View=cam3View*transXright;
+				cam3View=cam3View*transXright;
 				}*/
 				/*if(slaveNum==0 || slaveNum==4)
 				{
-					cam4View=cam4View*transXright;
+				cam4View=cam4View*transXright;
 				}*/
 
 				break;
@@ -172,15 +173,15 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				/*if(slaveNum==0 || slaveNum==2)
 				{
-					cam2View=cam2View*transZforward;
+				cam2View=cam2View*transZforward;
 				}
 				if(slaveNum==0 || slaveNum==3)
 				{
-					cam3View=cam3View*transZforward;
+				cam3View=cam3View*transZforward;
 				}*/
 				/*if(slaveNum==0 || slaveNum==4)
 				{
-					cam4View=cam4View*transZforward;
+				cam4View=cam4View*transZforward;
 				}*/
 
 				break;
@@ -193,15 +194,15 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				/*if(slaveNum==0 || slaveNum==2)
 				{
-					cam2View=cam2View*transZbackward;
+				cam2View=cam2View*transZbackward;
 				}
 				if(slaveNum==0 || slaveNum==3)
 				{
-					cam3View=cam3View*transZbackward;
+				cam3View=cam3View*transZbackward;
 				}*/
-			/*if(slaveNum==0 || slaveNum==4)
+				/*if(slaveNum==0 || slaveNum==4)
 				{
-					cam4View=cam4View*transZbackward;
+				cam4View=cam4View*transZbackward;
 				}*/
 				break;
 
@@ -213,15 +214,15 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				/*if(slaveNum==0 || slaveNum==2)
 				{
-					cam2View=cam2View*rotccw;
+				cam2View=cam2View*rotccw;
 				}
 				if(slaveNum==0 || slaveNum==3)
 				{
-					cam3View=cam3View*rotccw;
+				cam3View=cam3View*rotccw;
 				}*/
 				/*if(slaveNum==0 || slaveNum==4)
 				{
-					cam4View=cam4View*rotccw;
+				cam4View=cam4View*rotccw;
 				}*/
 				break;
 
@@ -234,15 +235,15 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				/*if(slaveNum==0 || slaveNum==2)
 				{
-					cam2View=cam2View*rotcw;
+				cam2View=cam2View*rotcw;
 				}
 				if(slaveNum==0 || slaveNum==3)
 				{
-					cam3View=cam3View*rotcw;
+				cam3View=cam3View*rotcw;
 				}*/
-			/*	if(slaveNum==0 || slaveNum==4)
+				/*	if(slaveNum==0 || slaveNum==4)
 				{
-					cam4View=cam4View*rotcw;
+				cam4View=cam4View*rotcw;
 				}*/
 				break;
 
@@ -253,15 +254,15 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				/*if(slaveNum==0 || slaveNum==2)
 				{
-					cam2View=cam2StartingView;
+				cam2View=cam2StartingView;
 				}
 				if(slaveNum==0 || slaveNum==3)
 				{
-					cam3View=cam3StartingView;
+				cam3View=cam3StartingView;
 				}*/
 				/*if(slaveNum==0 || slaveNum==4)
 				{
-					cam4View=cam4StartingView;
+				cam4View=cam4StartingView;
 				}*/
 				break;
 
@@ -272,15 +273,15 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 				}
 				/*if(slaveNum==0 || slaveNum==2)
 				{
-					cam2View=cam2DefaultView;
+				cam2View=cam2DefaultView;
 				}
 				if(slaveNum==0 || slaveNum==3)
 				{
-					cam3View=cam3DefaultView;
+				cam3View=cam3DefaultView;
 				}*/
 				/*if(slaveNum==0 || slaveNum==4)
 				{
-					cam4View=cam4DefaultView;
+				cam4View=cam4DefaultView;
 				}*/
 				break;
 
@@ -328,64 +329,35 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAd
 
 
 
-/*
-class GeodeUpdateCallback : public osg::NodeCallback 
-{ 
-public : 
-
-	void operator()( osg::Node * node , osg::NodeVisitor * nv) 
-	{ 
-		double currTime;
-		if (nv->getFrameStamp())
-		{
-			currTime= nv->getFrameStamp()->getSimulationTime();
-		}
-		
-		osg::Geode * geode = dynamic_cast< osg::Geode * >( node ); 
-		osg::Drawable* drawable = geode->getDrawable(0);
-		//osg::ShapeDrawable * geom = dynamic_cast< osg::ShapeDrawable * >( node ) ; 
-
-		osg::Shape* cyl = ((osg::ShapeDrawable*) drawable)->getShape();
-		((osg::Cylinder*)cyl)->setRotation(*quat);
-		((osg::ShapeDrawable*) drawable)->setShape(cyl);
-
-
-	} 
-}; */
-
-
 class TextureUpdateCallback : public osg::NodeCallback
 {
 private:
-osg::TexMat* texMat;
+	osg::TexMat* texMat;
 public:
-TextureUpdateCallback(osg::TexMat* tm)
-{
-texMat=tm;
-}
+	TextureUpdateCallback(osg::TexMat* tm)
+	{
+		texMat=tm;
+	}
 
-virtual void operator()(osg::Node*, osg::NodeVisitor* nv)
-{
-if (!texMat)
-{
-return;
-}
+	virtual void operator()(osg::Node*, osg::NodeVisitor* nv)
+	{
+		if (!texMat)
+		{
+			return;
+		}
 
-if (nv->getFrameStamp())
-{
+		if (nv->getFrameStamp())
+		{
 
-double currTime = nv->getFrameStamp()->getSimulationTime();
-float s=currTime*rS;
+			double currTime = nv->getFrameStamp()->getSimulationTime();
+			float s=currTime*rS;
+			float r=currTime*scaleRate;
 
-
-texMat->setMatrix(osg::Matrix::translate(s,0.0f,0.0f));
-//texMat->setMatrix(osg::Matrix::scale(1.0/s,1.0,1.0));
-//texMat->setMatrix(osg::Matrix::rotate(s,1,0,0));
-//texMat->setMatrix(osg::Matrix::lookAt(osg::Vec3d(0.5, 0.5, 10.0), osg::Vec3d(0.0,0.0,0.0), up));
-//texMat->setMatrix(osg::Matrix::ortho2D(-1.0+s, 1.0-s, -1.0, 1.0)/*osg::Matrix::translate(-s,0.0f,0.0f)*/);
-//texMat->setMatrix(osg::Matrix::scale(1.0-s,1.0,1.0)*osg::Matrix::translate(s,0.0f,0.0f));
-}
-}
+			//texMat->setMatrix(osg::Matrix::translate(s,0.0f,0.0f));
+			texMat->setMatrix(osg::Matrix::scale(1.0/(1.0+r),1.0,1.0)*osg::Matrix::translate(((1.0-(1.0/(1.0+r)))-1.0)/2.0+0.5,0.0f,0.0f));
+			//texMat->setMatrix(osg::Matrix::scale(1.0-r,1.0,1.0)*osg::Matrix::translate((r-1.0)/2.0+0.5,0.0f,0.0f));
+		}
+	}
 };
 
 
@@ -404,8 +376,8 @@ osg::Geode* createShapes()
 	{
 		osg::Texture2D* texture = new osg::Texture2D(image);
 		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-				//texture->setWrap(osg::Texture::WRAP_R, osg::Texture::REPEAT);
-					//	texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+		//texture->setWrap(osg::Texture::WRAP_R, osg::Texture::REPEAT);
+		//	texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
 		osg::TexMat* texmat = new osg::TexMat;
 		stateset->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
 		stateset->setTextureAttributeAndModes(0, texmat, osg::StateAttribute::ON);
@@ -430,7 +402,6 @@ osg::Geode* createShapes()
 	sphere->setUseDisplayList(false);
 	geode->addDrawable(sphere);
 
-	//geode->setUpdateCallback(new GeodeUpdateCallback());
 
 	osg::TexMat* texmat = (osg::TexMat*)(stateset->getTextureAttribute(0,osg::StateAttribute::TEXMAT));	
 	geode->setUpdateCallback(new TextureUpdateCallback(texmat));
@@ -509,7 +480,7 @@ void setStartingViews()
 		m3.setRotate(osg::Quat(osg::DegreesToRadians(numbers[14]), osg::Vec3d(numbers[15], numbers[16], numbers[17]))); 
 		m4.setTrans(numbers[18], 0.0, numbers[19]);
 		m4.setRotate(osg::Quat(osg::DegreesToRadians(numbers[20]), osg::Vec3d(numbers[21], numbers[22], numbers[23]))); 
-*/
+		*/
 		cam1StartingView=m1;
 		/*cam2StartingView=m2;
 		cam3StartingView=m3;*/
@@ -571,78 +542,78 @@ int main( int argc, char **argv )
 	}
 
 
-/*
+	/*
 	//right side
 
 	{
-		osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-		traits->x = xoffset+width;
-		traits->y = yoffset;
-		traits->width = width;
-		traits->height = height;
-		traits->windowDecoration = false;
-		traits->doubleBuffer = true;
-		traits->sharedContext = 0;
+	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+	traits->x = xoffset+width;
+	traits->y = yoffset;
+	traits->width = width;
+	traits->height = height;
+	traits->windowDecoration = false;
+	traits->doubleBuffer = true;
+	traits->sharedContext = 0;
 
-		osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
 
-		osg::ref_ptr<osg::Camera> camera = new osg::Camera;
-		camera->setGraphicsContext(gc.get());
-		camera->setViewport(new osg::Viewport(0,0, traits->width, traits->height));
-		GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
-		camera->setDrawBuffer(buffer);
-		camera->setReadBuffer(buffer);
-		viewer.addSlave(camera.get(), osg::Matrixd(),cam2View);	
+	osg::ref_ptr<osg::Camera> camera = new osg::Camera;
+	camera->setGraphicsContext(gc.get());
+	camera->setViewport(new osg::Viewport(0,0, traits->width, traits->height));
+	GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
+	camera->setDrawBuffer(buffer);
+	camera->setReadBuffer(buffer);
+	viewer.addSlave(camera.get(), osg::Matrixd(),cam2View);	
 	}
 
 	// back
 	{
-		osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-		traits->x = xoffset + width*2;
-		traits->y = yoffset + 0;
-		traits->width = width;
-		traits->height = height;
-		traits->windowDecoration = false;
-		traits->doubleBuffer = true;
-		traits->sharedContext = 0;
+	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+	traits->x = xoffset + width*2;
+	traits->y = yoffset + 0;
+	traits->width = width;
+	traits->height = height;
+	traits->windowDecoration = false;
+	traits->doubleBuffer = true;
+	traits->sharedContext = 0;
 
-		osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
 
-		osg::ref_ptr<osg::Camera> camera = new osg::Camera;
-		camera->setGraphicsContext(gc.get());
-		camera->setViewport(new osg::Viewport(0,0, traits->width, traits->height));
-		GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
-		camera->setDrawBuffer(buffer);
-		camera->setReadBuffer(buffer);
-		viewer.addSlave(camera.get(), osg::Matrixd(),cam3View);
+	osg::ref_ptr<osg::Camera> camera = new osg::Camera;
+	camera->setGraphicsContext(gc.get());
+	camera->setViewport(new osg::Viewport(0,0, traits->width, traits->height));
+	GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
+	camera->setDrawBuffer(buffer);
+	camera->setReadBuffer(buffer);
+	viewer.addSlave(camera.get(), osg::Matrixd(),cam3View);
 	}
-*/
+	*/
 
 	//left side
-/*
+	/*
 	{
-		osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-		traits->x = xoffset+width*3;
-		traits->y = yoffset;
-		traits->width = width;
-		traits->height = height;
-		traits->windowDecoration = false;
-		traits->doubleBuffer = true;
-		traits->sharedContext = 0;
+	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+	traits->x = xoffset+width*3;
+	traits->y = yoffset;
+	traits->width = width;
+	traits->height = height;
+	traits->windowDecoration = false;
+	traits->doubleBuffer = true;
+	traits->sharedContext = 0;
 
-		osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
 
-		osg::ref_ptr<osg::Camera> camera = new osg::Camera;
-		camera->setGraphicsContext(gc.get());
-		camera->setViewport(new osg::Viewport(0,0, traits->width, traits->height));
-		GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
-		camera->setDrawBuffer(buffer);
-		camera->setReadBuffer(buffer);
+	osg::ref_ptr<osg::Camera> camera = new osg::Camera;
+	camera->setGraphicsContext(gc.get());
+	camera->setViewport(new osg::Viewport(0,0, traits->width, traits->height));
+	GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
+	camera->setDrawBuffer(buffer);
+	camera->setReadBuffer(buffer);
 
-		viewer.addSlave(camera.get(), osg::Matrixd(),cam4View);
+	viewer.addSlave(camera.get(), osg::Matrixd(),cam4View);
 	}
 
-*/
+	*/
 
 
 	keyboardHandler* handler = new keyboardHandler();

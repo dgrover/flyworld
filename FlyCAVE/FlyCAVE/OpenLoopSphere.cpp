@@ -328,8 +328,16 @@ void TextureUpdateCallback::operator()(osg::Node*, osg::NodeVisitor* nv)
 		float r=currTime*scaleRate;
 
 
-		//texMat->setMatrix(osg::Matrix::translate(s,0.0f,0.0f));
-		texMat->setMatrix(osg::Matrix::scale(1.0/(1.0+r),1.0,1.0)*osg::Matrix::translate(((1.0-(1.0/(1.0+r)))-1.0)/2.0+0.5,0.0f,0.0f));
+		if(expansion)
+		{
+			texMat->setMatrix(osg::Matrix::scale(1.0/(1.0+r),1.0,1.0)*osg::Matrix::translate(((1.0-(1.0/(1.0+r)))-1.0)/2.0+0.5,0.0f,0.0f));
+		}
+
+		else
+		{
+			texMat->setMatrix(osg::Matrix::translate(s,0.0f,0.0f));
+		}
+
 		//texMat->setMatrix(osg::Matrix::scale(1.0-r,1.0,1.0)*osg::Matrix::translate((r-1.0)/2.0+0.5,0.0f,0.0f));
 	}
 }
@@ -378,7 +386,7 @@ osg::ref_ptr<osg::Geode> OpenLoopSphere::createShapes()
 	geode->addDrawable(sphere);
 
 	osg::ref_ptr<osg::TexMat> texmat = (osg::ref_ptr<osg::TexMat>)((osg::TexMat*) (stateset->getTextureAttribute(0,osg::StateAttribute::TEXMAT)));	
-	geode->setUpdateCallback(new TextureUpdateCallback(texmat, rS, scaleRate));
+	geode->setUpdateCallback(new TextureUpdateCallback(texmat, rS, scaleRate, expansion));
 	return geode;
 }
 

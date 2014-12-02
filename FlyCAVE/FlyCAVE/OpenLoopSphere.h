@@ -27,6 +27,7 @@ private:
 	int slaveNum;
 	float transInc, rotInc;
 	double inc;
+	bool expansion;
 	osg::Matrixd cam1StartingView;
 	//osg::Matrixd cam2StartingView;
 	//osg::Matrixd cam3StartingView;
@@ -66,9 +67,9 @@ public:
 
 	void printInfo(int cam);
 	void writeInfo();
-	OpenLoopSphere(double n, double w, double h, double x, double y, double ch, double cv, float c, double d, double s, double r, const char* i, const char* df): numViews(n),
+	OpenLoopSphere(double n, double w, double h, double x, double y, double ch, double cv, float c, double d, double s, double r, const char* i, const char* df, bool exp): numViews(n),
 		totalWidth(w), totalHeight(h), viewWidth(w/n), viewHeight(h), xOffset(x), yOffset(y),
-		camHorLoc(ch), camVertLoc(cv), cRadius(c), distance(d), scaleRate(s), rS(r), imageFileName(i), displayFile(df)
+		camHorLoc(ch), camVertLoc(cv), cRadius(c), distance(d), scaleRate(s), rS(r), imageFileName(i), displayFile(df), expansion(exp)
 	{
 		slaveNum=0;
 		transInc=0.1;

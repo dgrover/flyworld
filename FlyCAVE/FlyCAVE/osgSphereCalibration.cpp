@@ -16,8 +16,8 @@ int height=imageHeight;
 double camHorLoc=0;
 double camVertLoc=0;
 
-float cradius = (7.5/2.0);// * 1280.0/800.0; ///7.5 diameter
-double distance=cradius + 10.5;//14;//;
+float cradius = 2.0;// * 1280.0/800.0; ///7.5 diameter
+double distance=cradius + 11.0;//14;//;
 
 
 int slaveNum=0;
@@ -60,8 +60,8 @@ osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1);
 double diam=3.14159*2;
 double depth=0;
 
-double scaleRate = 0.4;
-double rS = -1.0/2.5; //rotation speed
+double scaleRate = 0;// 0.4;
+double rS = 0;// -1.0 / 2.5; //rotation speed
 double inc = 0.1;
 
 osg::Vec3d up=osg::Vec3d(0,0,1); //up vector
@@ -620,7 +620,7 @@ int main( int argc, char **argv )
 	viewer.addEventHandler(handler); 
 	viewer.getCamera()->setClearColor(backgroundColor); // black background
 	viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc,distance,camVertLoc), osg::Vec3d(camHorLoc,depth,camVertLoc), up);
-	viewer.getCamera()->setProjectionMatrixAsPerspective(40.0, ((double)width)/((double)height), 0.1, 5);
+	viewer.getCamera()->setProjectionMatrixAsPerspective(25.0, 1920.0 / 1200.0, 0.1, 5);
 	viewer.setCameraManipulator(NULL);
 
 	while(!viewer.done())

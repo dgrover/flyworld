@@ -72,137 +72,146 @@ class keyboardHandler : public osgGA::GUIEventHandler
 		}
 };
 
-osg::Geode* createSphere(float radius)
+class calibSphere
 {
-	const char* imageFileName = "image.bmp";
+	private:
+		osgViewer::Viewer viewer;
+		osg::Matrixd sphereView;
 
-	osg::Geode* geode = new osg::Geode();
+		const char* imageFileName = "image.bmp";
 
-	osg::StateSet* stateset = new osg::StateSet();
-	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	osg::Image* image = new osg::Image();
+		double imageWidth = 1280;
+		double imageHeight = 800;
 
-	image = osgDB::readImageFile(imageFileName);
+		int xoffset = 0;
+		int yoffset = 0;
 
-	if (image)
-	{
-		osg::Texture2D* texture = new osg::Texture2D(image);
-		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+		double camHorLoc = 0;
+		double camVertLoc = 0;
 
-		osg::TexMat* texmat = new osg::TexMat;
-		stateset->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
-		stateset->setTextureAttributeAndModes(0, texmat, osg::StateAttribute::ON);
-		texture->setUnRefImageDataAfterApply(true);
-	}
+		float radius = 2.0;
+		float projdist = 11.0;
 
-	geode->setStateSet(stateset);
-	geode->setCullingActive(false);
+		float fov = 25.0;
+		double depth = 0;
 
-	osg::TessellationHints* hints = new osg::TessellationHints;
-	hints->setDetailRatio(0.8f);
+		osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1);
+		osg::Vec3d up = osg::Vec3d(0, 0, 1); //up vector
 
-	hints->setCreateBackFace(true);
-	hints->setCreateFrontFace(false);
-	hints->setCreateNormals(false);
-	hints->setCreateTop(false);
-	hints->setCreateBottom(false);
+	public:
+		void setup()
+		{
+			osg::Geode* geode = new osg::Geode();
 
-	osg::Sphere* sph = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), radius);
-	osg::ShapeDrawable* sphere = new osg::ShapeDrawable(sph, hints);
-	sphere->setUseDisplayList(false);
-	geode->addDrawable(sphere);
+			osg::StateSet* stateset = new osg::StateSet();
+			stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+			osg::Image* image = new osg::Image();
 
-	osg::TexMat* texmat = (osg::TexMat*)(stateset->getTextureAttribute(0, osg::StateAttribute::TEXMAT));
+			image = osgDB::readImageFile(imageFileName);
 
-	return geode;
-}
+			if (image)
+			{
+				osg::Texture2D* texture = new osg::Texture2D(image);
+				texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
 
-void printInfo(osgViewer::Viewer viewer)
-{
-	osg::Quat::value_type  angle = *new osg::Quat::value_type();
-	osg::Quat::value_type  rotVecX = *new osg::Quat::value_type();
-	osg::Quat::value_type  rotVecY = *new osg::Quat::value_type();
-	osg::Quat::value_type  rotVecZ = *new osg::Quat::value_type();
+				osg::TexMat* texmat = new osg::TexMat;
+				stateset->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+				stateset->setTextureAttributeAndModes(0, texmat, osg::StateAttribute::ON);
+				texture->setUnRefImageDataAfterApply(true);
+			}
 
-	printf("**********\n");
+			geode->setStateSet(stateset);
+			geode->setCullingActive(false);
 
-	printf("Camera X Position: %f\n", viewer.getSlave(0)._viewOffset.getTrans().x());
-	printf("Camera Z Position: %f\n", viewer.getSlave(0)._viewOffset.getTrans().z());
+			osg::TessellationHints* hints = new osg::TessellationHints;
+			hints->setDetailRatio(0.8f);
 
-	viewer.getSlave(0)._viewOffset.getRotate().getRotate(angle, rotVecX, rotVecY, rotVecZ);
+			hints->setCreateBackFace(true);
+			hints->setCreateFrontFace(false);
+			hints->setCreateNormals(false);
+			hints->setCreateTop(false);
+			hints->setCreateBottom(false);
 
-	printf("Camera Rotation: %f\n", osg::RadiansToDegrees(angle));
-	printf("Camera Rotation Vector X: %f\n", rotVecX);
-	printf("Camera Rotation Vector Y: %f\n", rotVecY);
-	printf("Camera Rotation Vector Z: %f\n", rotVecZ);
-	printf("\n");
+			osg::Sphere* sph = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), radius);
+			osg::ShapeDrawable* sphere = new osg::ShapeDrawable(sph, hints);
+			sphere->setUseDisplayList(false);
+			geode->addDrawable(sphere);
 
-	printf("**********\n\n");
-}
+			osg::Group* root = new osg::Group;
+			root->addChild(geode);
 
+			viewer.setSceneData(root);
+
+			osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+			traits->x = xoffset;
+			traits->y = yoffset;
+			traits->width = imageWidth;
+			traits->height = imageHeight;
+			traits->windowDecoration = false;
+			traits->doubleBuffer = true;
+			traits->sharedContext = 0;
+
+			osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+
+			osg::ref_ptr<osg::Camera> camera = new osg::Camera;
+			camera->setGraphicsContext(gc.get());
+			camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
+			GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
+			camera->setDrawBuffer(buffer);
+			camera->setReadBuffer(buffer);
+			viewer.addSlave(camera.get(), osg::Matrixd(), osg::Matrixd());
+
+			viewer.getCamera()->setClearColor(backgroundColor); // black background
+			viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc, (radius + projdist), camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), up);
+			viewer.getCamera()->setProjectionMatrixAsPerspective(fov, imageWidth / imageHeight, 0.1, 5);
+
+			keyboardHandler* handler = new keyboardHandler(sphereView);
+			viewer.addEventHandler(handler);
+
+			viewer.setCameraManipulator(NULL);
+		}
+
+		void run()
+		{
+			while (!viewer.done())
+			{
+				viewer.getSlave(0)._viewOffset = sphereView;
+				viewer.frame();
+			}
+		}
+
+		void printInfo()
+		{
+			osg::Quat::value_type  angle = *new osg::Quat::value_type();
+			osg::Quat::value_type  rotVecX = *new osg::Quat::value_type();
+			osg::Quat::value_type  rotVecY = *new osg::Quat::value_type();
+			osg::Quat::value_type  rotVecZ = *new osg::Quat::value_type();
+
+			printf("**********\n");
+
+			printf("Camera X Position: %f\n", viewer.getSlave(0)._viewOffset.getTrans().x());
+			printf("Camera Z Position: %f\n", viewer.getSlave(0)._viewOffset.getTrans().z());
+
+			viewer.getSlave(0)._viewOffset.getRotate().getRotate(angle, rotVecX, rotVecY, rotVecZ);
+
+			printf("Camera Rotation: %f\n", osg::RadiansToDegrees(angle));
+			printf("Camera Rotation Vector X: %f\n", rotVecX);
+			printf("Camera Rotation Vector Y: %f\n", rotVecY);
+			printf("Camera Rotation Vector Z: %f\n", rotVecZ);
+			printf("\n");
+
+			printf("**********\n\n");
+		}
+};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	osgViewer::Viewer viewer;
-	osg::Matrixd sphereView;
-
-	double imageWidth = 1280;
-	double imageHeight = 800;
-
-	int xoffset = 0;
-	int yoffset = 0;
-
-	double camHorLoc = 0;
-	double camVertLoc = 0;
-
-	float radius = 2.0;
-	float projdist = 11.0;
-
-	float fov = 25.0;
-	double depth = 0;
-
-	osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1);
-	osg::Vec3d up = osg::Vec3d(0, 0, 1); //up vector
+	calibSphere cs;
 	
-	osg::Group* root = new osg::Group;
-	root->addChild(createSphere(radius));
-	
-	viewer.setSceneData(root);
+	cs.setup();
+	cs.run();
 
-	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-	traits->x = xoffset;
-	traits->y = yoffset;
-	traits->width = imageWidth;
-	traits->height = imageHeight;
-	traits->windowDecoration = false;
-	traits->doubleBuffer = true;
-	traits->sharedContext = 0;
-
-	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
-
-	osg::ref_ptr<osg::Camera> camera = new osg::Camera;
-	camera->setGraphicsContext(gc.get());
-	camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
-	GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
-	camera->setDrawBuffer(buffer);
-	camera->setReadBuffer(buffer);
-	viewer.addSlave(camera.get(), osg::Matrixd(), osg::Matrixd());
-
-	keyboardHandler* handler = new keyboardHandler(sphereView);
-	viewer.addEventHandler(handler);
-	viewer.getCamera()->setClearColor(backgroundColor); // black background
-	viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc, (radius + projdist), camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), up);
-	viewer.getCamera()->setProjectionMatrixAsPerspective(fov, imageWidth/imageHeight, 0.1, 5);
-	
-	viewer.setCameraManipulator(NULL);
-
-	while (!viewer.done())
-	{
-		viewer.getSlave(0)._viewOffset = sphereView;
-		viewer.frame();
-	}
-
-	printInfo(viewer);
+	cs.printInfo();
 	getchar();
 
 	return 0;

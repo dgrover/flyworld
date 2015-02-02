@@ -3,42 +3,121 @@
 
 #include "stdafx.h"
 
-double imageWidth = 912;
-double imageHeight = 1140;
+class keyboardHandler : public osgGA::GUIEventHandler
+{
+	private:
+		osg::Matrixd& sphereView;
+		float transInc;
+		float rotInc;
 
-int xoffset = 0;
-int yoffset = 0;
+		osg::Matrixd transZforward;
+		osg::Matrixd transZbackward;
+		osg::Matrixd transXleft;
+		osg::Matrixd transXright;
+		osg::Matrixd rotcw;
+		osg::Matrixd rotccw;
 
-double camHorLoc = 0;
-double camVertLoc = 0;
+	public:
+		keyboardHandler(osg::Matrixd& sv) : sphereView(sv)
+		{
+			transInc = 0.1;
+			rotInc = 1;
 
-float cradius = 2.0;
-float pdist = 11.0;
+			transZforward = osg::Matrixd::translate(0.0, 0.0, transInc);
+			transZbackward = osg::Matrixd::translate(0.0, 0.0, transInc*-1);
+			transXleft = osg::Matrixd::translate(transInc, 0.0, 0.0);
+			transXright = osg::Matrixd::translate(transInc*-1, 0.0, 0.0);
+			rotcw = osg::Matrixd::rotate(osg::DegreesToRadians(rotInc), osg::Vec3(0, 1, 0));
+			rotccw = osg::Matrixd::rotate(osg::DegreesToRadians(rotInc*-1), osg::Vec3(0, 1, 0));
+		}
 
-float distance = cradius + pdist;
+		virtual bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+		{
+			if (ea.getEventType() == osgGA::GUIEventAdapter::KEYDOWN)
+			{
+				switch (ea.getKey())
+				{
+				case 'a':
+					sphereView = sphereView*transXleft;
+					break;
 
-float fov = 25.0;
+				case 'd':
+					sphereView = sphereView*transXright;
+					break;
 
-float transInc = 0.1;
-float rotInc = 1;
-double depth = 0;
+				case 'w':
+					sphereView = sphereView*transZforward;
+					break;
 
-osg::Matrixd transZforward = osg::Matrixd::translate(0.0, 0.0, transInc);
-osg::Matrixd transZbackward = osg::Matrixd::translate(0.0, 0.0, transInc*-1);
-osg::Matrixd transXleft = osg::Matrixd::translate(transInc, 0.0, 0.0);
-osg::Matrixd transXright = osg::Matrixd::translate(transInc*-1, 0.0, 0.0);
-osg::Matrixd rotcw = osg::Matrixd::rotate(osg::DegreesToRadians(rotInc), osg::Vec3(0, 1, 0));
-osg::Matrixd rotccw = osg::Matrixd::rotate(osg::DegreesToRadians(rotInc*-1), osg::Vec3(0, 1, 0));
+				case 's':
+					sphereView = sphereView*transZbackward;
+					break;
 
-osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1);
-osg::Vec3d up = osg::Vec3d(0, 0, 1); //up vector
+				case 'q':
+					sphereView = sphereView*rotccw;
+					break;
 
-const char* imageFileName = "image.bmp";
+				case 'e':
+					sphereView = sphereView*rotcw;
+					break;
 
-osg::Matrixd sphereView;
-osgViewer::Viewer viewer;
+				default:
+					return false;
+				}
 
-void printInfo()
+				return true;
+			}
+			else
+				return false;
+		}
+};
+
+osg::Geode* createSphere(float radius)
+{
+	const char* imageFileName = "image.bmp";
+
+	osg::Geode* geode = new osg::Geode();
+
+	osg::StateSet* stateset = new osg::StateSet();
+	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	osg::Image* image = new osg::Image();
+
+	image = osgDB::readImageFile(imageFileName);
+
+	if (image)
+	{
+		osg::Texture2D* texture = new osg::Texture2D(image);
+		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+
+		osg::TexMat* texmat = new osg::TexMat;
+		stateset->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+		stateset->setTextureAttributeAndModes(0, texmat, osg::StateAttribute::ON);
+		texture->setUnRefImageDataAfterApply(true);
+	}
+
+	geode->setStateSet(stateset);
+	geode->setCullingActive(false);
+
+	osg::TessellationHints* hints = new osg::TessellationHints;
+	hints->setDetailRatio(0.8f);
+
+	hints->setCreateBackFace(true);
+	hints->setCreateFrontFace(false);
+	hints->setCreateNormals(false);
+	hints->setCreateTop(false);
+	hints->setCreateBottom(false);
+
+	osg::Sphere* sph = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), radius);
+	osg::ShapeDrawable* sphere = new osg::ShapeDrawable(sph, hints);
+	sphere->setUseDisplayList(false);
+	geode->addDrawable(sphere);
+
+	osg::TexMat* texmat = (osg::TexMat*)(stateset->getTextureAttribute(0, osg::StateAttribute::TEXMAT));
+
+	return geode;
+}
+
+void printInfo(osgViewer::Viewer viewer)
 {
 	osg::Quat::value_type  angle = *new osg::Quat::value_type();
 	osg::Quat::value_type  rotVecX = *new osg::Quat::value_type();
@@ -61,104 +140,32 @@ void printInfo()
 	printf("**********\n\n");
 }
 
-class keyboardHandler : public osgGA::GUIEventHandler
-{
-	public:
-		virtual bool handle(const osgGA::GUIEventAdapter&, osgGA::GUIActionAdapter&);
-};
-
-bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
-{
-	if (ea.getEventType() == osgGA::GUIEventAdapter::KEYDOWN)
-	{
-		switch (ea.getKey())
-		{
-			case 'a':
-				sphereView = sphereView*transXleft;
-				break;
-
-			case 'd':
-				sphereView = sphereView*transXright;
-				break;
-
-			case 'w':
-				sphereView = sphereView*transZforward;
-				break;
-
-			case 's':
-				sphereView = sphereView*transZbackward;
-				break;
-
-			case 'q':
-				sphereView = sphereView*rotccw;
-				break;
-
-			case 'e':
-				sphereView = sphereView*rotcw;
-				break;
-
-			case 'p':
-				printInfo();
-				break;
-
-			default:
-				return false;
-		}
-
-		return true;
-	}
-	else
-		return false;
-}
-
-
-osg::Geode* createShapes()
-{
-	osg::Geode* geode = new osg::Geode();
-
-	osg::StateSet* stateset = new osg::StateSet();
-	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	osg::Image* image = new osg::Image();
-
-	image = osgDB::readImageFile(imageFileName);
-
-	if (image)
-	{
-		osg::Texture2D* texture = new osg::Texture2D(image);
-		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-		
-		osg::TexMat* texmat = new osg::TexMat;
-		stateset->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
-		stateset->setTextureAttributeAndModes(0, texmat, osg::StateAttribute::ON);
-		texture->setUnRefImageDataAfterApply(true);
-	}
-
-	geode->setStateSet(stateset);
-	geode->setCullingActive(false);
-
-	osg::TessellationHints* hints = new osg::TessellationHints;
-	hints->setDetailRatio(0.8f);
-
-	hints->setCreateBackFace(true);
-	hints->setCreateFrontFace(false);
-	hints->setCreateNormals(false);
-	hints->setCreateTop(false);
-	hints->setCreateBottom(false);
-
-	osg::Sphere* sph = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), cradius);
-	osg::ShapeDrawable* sphere = new osg::ShapeDrawable(sph, hints);
-	sphere->setUseDisplayList(false);
-	geode->addDrawable(sphere);
-
-	osg::TexMat* texmat = (osg::TexMat*)(stateset->getTextureAttribute(0, osg::StateAttribute::TEXMAT));
-
-	return geode;
-}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	osgViewer::Viewer viewer;
+	osg::Matrixd sphereView;
+
+	double imageWidth = 1280;
+	double imageHeight = 800;
+
+	int xoffset = 0;
+	int yoffset = 0;
+
+	double camHorLoc = 0;
+	double camVertLoc = 0;
+
+	float radius = 2.0;
+	float projdist = 11.0;
+
+	float fov = 25.0;
+	double depth = 0;
+
+	osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1);
+	osg::Vec3d up = osg::Vec3d(0, 0, 1); //up vector
+	
 	osg::Group* root = new osg::Group;
-	root->addChild(createShapes());
+	root->addChild(createSphere(radius));
 	
 	viewer.setSceneData(root);
 
@@ -181,11 +188,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	camera->setReadBuffer(buffer);
 	viewer.addSlave(camera.get(), osg::Matrixd(), osg::Matrixd());
 
-	keyboardHandler* handler = new keyboardHandler();
+	keyboardHandler* handler = new keyboardHandler(sphereView);
 	viewer.addEventHandler(handler);
 	viewer.getCamera()->setClearColor(backgroundColor); // black background
-	viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc, distance, camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), up);
-	viewer.getCamera()->setProjectionMatrixAsPerspective(fov, imageWidth / imageHeight, 0.1, 5);
+	viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc, (radius + projdist), camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), up);
+	viewer.getCamera()->setProjectionMatrixAsPerspective(fov, imageWidth/imageHeight, 0.1, 5);
 	
 	viewer.setCameraManipulator(NULL);
 
@@ -194,6 +201,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		viewer.getSlave(0)._viewOffset = sphereView;
 		viewer.frame();
 	}
+
+	printInfo(viewer);
+	getchar();
 
 	return 0;
 }

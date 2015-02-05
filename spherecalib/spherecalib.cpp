@@ -80,11 +80,11 @@ class calibSphere
 
 		const char* imageFileName = "image.bmp";
 
-		double imageWidth = 1280;
-		double imageHeight = 800;
+		double imageWidth = 912.0;
+		double imageHeight = 1140.0;
 
-		int xoffset = 0;
-		int yoffset = 0;
+		double aspectWidth = 1280.0;
+		double aspectHeight = 800.0;
 
 		double camHorLoc = 0;
 		double camVertLoc = 0;
@@ -143,13 +143,15 @@ class calibSphere
 			viewer.setSceneData(root);
 
 			osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-			traits->x = xoffset;
-			traits->y = yoffset;
+			traits->x = 0;
+			traits->y = 0;
 			traits->width = imageWidth;
 			traits->height = imageHeight;
 			traits->windowDecoration = false;
 			traits->doubleBuffer = true;
 			traits->sharedContext = 0;
+			traits->screenNum = 1;
+
 
 			osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
 
@@ -163,8 +165,8 @@ class calibSphere
 
 			viewer.getCamera()->setClearColor(backgroundColor); // black background
 			viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc, (radius + projdist), camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), up);
-			viewer.getCamera()->setProjectionMatrixAsPerspective(fov, imageWidth / imageHeight, 0.1, 5);
-
+			viewer.getCamera()->setProjectionMatrixAsPerspective(fov, aspectWidth / aspectHeight, 0.1, 5);
+			
 			keyboardHandler* handler = new keyboardHandler(sphereView);
 			viewer.addEventHandler(handler);
 

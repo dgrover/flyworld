@@ -29,19 +29,36 @@ static osgDB::DirectoryContents getImages(std::string directory)
 	return images;
 }
 
-
-
 osg::ref_ptr<osg::Geode> FlyTunnel::createShapes()
 {
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
 	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	osg::ref_ptr<osg::Image> image = new osg::Image();
-	image = osgDB::readImageFile(imageFileName);
 
-	if (image)
+
+	osgDB::DirectoryContents images = getImages(imageFileName);
+	imageSequence = new osg::ImageSequence;
+	imageSequence->setMode(osg::ImageSequence::Mode::PRE_LOAD_ALL_IMAGES);
+
+	if (!images.empty())
 	{
-		osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D(image);
+		for (osgDB::DirectoryContents::iterator itr = images.begin(); itr != images.end(); ++itr)
+		{
+			const std::string& filename = *itr;
+			osg::ref_ptr<osg::Image> image = osgDB::readImageFile(filename);
+
+			if (image.valid())
+			{
+				imageSequence->addImage(image.get());
+			}
+		}
+
+		numImages = imageSequence->getNumImageData();
+	}
+
+	if (imageSequence)
+	{
+		osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D(imageSequence.get());
 		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
 		osg::ref_ptr<osg::TexMat> texmat = new osg::TexMat;
 		stateset->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
@@ -100,7 +117,7 @@ void FlyTunnel::setSequence()
 	}
 	else
 	{
-		for (int i = 0; i < numImages; i++)
+		for (unsigned int i = 0; i < numImages; i++)
 			sequence.push_back(1);
 	}
 }
@@ -108,7 +125,7 @@ void FlyTunnel::setSequence()
 void FlyTunnel::setup()
 {
 	osg::ref_ptr<osg::Group> root = new osg::Group;
-	root->addChild(createShapes());
+	root->addChild(createShapes());	
 	setSequence();
 	viewer->setSceneData(root);
 	setView();

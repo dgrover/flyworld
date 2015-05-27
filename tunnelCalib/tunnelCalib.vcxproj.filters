@@ -24,10 +24,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FlyTunnel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tunnelcalib.h">
+    <ClInclude Include="tunnelCalib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,10 +32,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FlyTunnel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Test.cpp">
+    <ClCompile Include="tunnelCalib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

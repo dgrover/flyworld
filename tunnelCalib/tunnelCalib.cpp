@@ -1,7 +1,6 @@
 
 #include "stdafx.h"
 #include "tunnelcalib.h"
-#include "FlyTunnel.h"
 
 int xOffset = 0;
 int yOffset = 0;
@@ -30,7 +29,7 @@ double depth = 0;
 osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1);
 osg::Vec3d up = osg::Vec3d(0, 0, 1); //up vector
 const char* imageFileName = "images//numberline.gif";//"vert_stripe.bmp";
-const char* displayFile = "displaySettings.txt";
+const char* displayFile = "..//tunnelDisplaySettings.txt";
 osgViewer::Viewer viewer;
 
 void printInfo();

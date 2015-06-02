@@ -8,6 +8,9 @@ int yOffset = 0;
 double viewWidth = 1920;
 double viewHeight =  1200;
 
+double boxWidth = viewWidth / 100.0;
+double boxHeight = viewHeight / 100.0;
+
 double defaultDistance = (10.0);
 double distance = defaultDistance;
 
@@ -19,7 +22,9 @@ double loadedRotation = defaultRotation;
 double loadedDistance = defaultDistance;
 
 
-double camHorLoc = 0;
+double defaultCamHorLoc = boxWidth / 2.0;
+double loadedCamHorLoc = defaultCamHorLoc;
+double camHorLoc = defaultCamHorLoc;
 double camVertLoc = 0;
 double transInc = 0.1;
 double depth = 0;
@@ -61,6 +66,14 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionA
 			distance = distance + transInc;
 			break;
 
+		case 'a':
+			camHorLoc=camHorLoc-transInc;
+			break;
+
+		case 'd':
+			camHorLoc = camHorLoc + transInc;;
+			break;
+
 		case 'q':
 			rotation = rotation - transInc*10.0;
 			break;
@@ -73,11 +86,13 @@ bool keyboardHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionA
 		case ' ':
 			rotation = loadedRotation;
 			distance = loadedDistance;
+			camHorLoc= loadedCamHorLoc;
 			break;
 
 		case '.':
 			rotation = defaultRotation;
 			distance = defaultDistance;
+			camHorLoc = defaultCamHorLoc;
 			break;
 
 		case '+':
@@ -127,7 +142,7 @@ osg::ref_ptr<osg::Geode> createShapes()
 	}
 
 	geode->setStateSet(stateset);
-	geode->setCullingActive(false);
+	geode->setCullingActive(true);
 
 	osg::ref_ptr<osg::TessellationHints> hints = new osg::TessellationHints;
 	hints->setDetailRatio(2.0f);
@@ -138,7 +153,7 @@ osg::ref_ptr<osg::Geode> createShapes()
 	hints->setCreateTop(false);
 	hints->setCreateBottom(true);
 	
-	 box = new osg::Box(osg::Vec3d(0.0, 0.0, 0.0), 3*viewWidth/viewHeight,3*viewHeight/viewWidth, 0);
+	 box = new osg::Box(osg::Vec3d(0.0, 0.0, 0.0), boxWidth,boxHeight, 0);
 	box->setRotation(osg::Quat(osg::DegreesToRadians(90.0), osg::Vec3d(1,0,0)));
 	osg::ref_ptr<osg::ShapeDrawable> rect = new osg::ShapeDrawable(box, hints);
 	rect->setUseDisplayList(false);
@@ -152,6 +167,7 @@ void printInfo()
 	printf("**********\n");
 	printf("Distance: %f\n", distance);
 	printf("Rotation: %f\n", rotation);
+	printf("Hor Loc: %f\n", camHorLoc);
 	printf("**********\n\n");
 }
 
@@ -161,6 +177,7 @@ void writeInfo()
 	FILE * file = fopen(displayFile, "w");
 	fprintf(file, "%f\n", distance);
 	fprintf(file, "%f\n", rotation);
+	fprintf(file, "%f\n", camHorLoc);
 	fclose(file);
 }
 
@@ -172,8 +189,10 @@ void setStartingViews()
 	{
 		file >> loadedDistance;
 		file >> loadedRotation;
+		file >> loadedCamHorLoc;
 		distance = loadedDistance;
 		rotation = loadedRotation;
+		camHorLoc = loadedCamHorLoc;
 		file.close();
 	}
 
@@ -181,6 +200,7 @@ void setStartingViews()
 	{
 		distance = defaultDistance;
 		rotation = defaultRotation;
+		camHorLoc = defaultCamHorLoc;
 	}
 }
 
@@ -194,22 +214,45 @@ void setup()
 	setStartingViews();
 
 	osg::ref_ptr<osg::GraphicsContext::Traits> masterTraits = new osg::GraphicsContext::Traits;
-	masterTraits->x = xOffset;
-	masterTraits->y = yOffset;
-	masterTraits->width = viewWidth;
-	masterTraits->height = viewHeight;
-	masterTraits->windowDecoration = false;
-	masterTraits->doubleBuffer = true;
-	masterTraits->sharedContext = 0;
 	GLenum buffer = masterTraits->doubleBuffer ? GL_BACK : GL_FRONT;
 	viewer.getCamera()->setDrawBuffer(buffer);
 	viewer.getCamera()->setReadBuffer(buffer);
 	viewer.getCamera()->setClearColor(osg::Vec4(0, 0, 0, 1)); // black background
 	viewer.setCameraManipulator(NULL);
-	osg::ref_ptr<osg::GraphicsContext> centerGC = osg::GraphicsContext::createGraphicsContext(masterTraits.get());
-	viewer.getCamera()->setGraphicsContext(centerGC.get());
-	osg::ref_ptr<osg::Viewport> centerVP = new osg::Viewport(0, 0, masterTraits->width, masterTraits->height);
-	viewer.getCamera()->setViewport(centerVP);
+
+
+	osg::ref_ptr<osg::Camera> leftCam = new osg::Camera;
+	osg::ref_ptr<osg::GraphicsContext::Traits> leftTraits = new osg::GraphicsContext::Traits;
+	leftTraits->x = xOffset;
+	leftTraits->y = yOffset;
+	leftTraits->width = viewWidth/2;
+	leftTraits->height = viewHeight;
+	leftTraits->windowDecoration = false;
+	leftTraits->doubleBuffer = true;
+	leftTraits->sharedContext = 0;
+	osg::ref_ptr<osg::GraphicsContext> leftGC = osg::GraphicsContext::createGraphicsContext(leftTraits.get());
+	leftCam->setGraphicsContext(leftGC.get());
+	osg::ref_ptr<osg::Viewport> leftVP = new osg::Viewport(0, 0, leftTraits->width, leftTraits->height);
+	leftCam->setViewport(leftVP);
+	viewer.addSlave(leftCam);
+
+
+
+
+	osg::ref_ptr<osg::Camera> rightCam = new osg::Camera;
+	osg::ref_ptr<osg::GraphicsContext::Traits> rightTraits = new osg::GraphicsContext::Traits;
+	rightTraits->x = xOffset+viewWidth/2;
+	rightTraits->y = yOffset;
+	rightTraits->width = viewWidth/2;
+	rightTraits->height = viewHeight ;
+	rightTraits->windowDecoration = false;
+	rightTraits->doubleBuffer = true;
+	rightTraits->sharedContext = 0;
+	osg::ref_ptr<osg::GraphicsContext> rightGC = osg::GraphicsContext::createGraphicsContext(rightTraits.get());
+	rightCam->setGraphicsContext(rightGC.get());
+	osg::ref_ptr<osg::Viewport> rightVP = new osg::Viewport(0, 0, rightTraits->width, rightTraits->height);
+	rightCam->setViewport(rightVP);
+	viewer.addSlave(rightCam);
 }
 
 void run()
@@ -217,8 +260,18 @@ void run()
 
 	while (!viewer.done())
 	{
-		viewer.getCamera()->setViewMatrix(osg::Matrixd::rotate(osg::DegreesToRadians(rotation), osg::Vec3(1, 0, 0))*osg::Matrixd::lookAt(osg::Vec3d(camHorLoc, distance, camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), osg::Vec3d(0, 0, 1)));
-		viewer.getCamera()->setProjectionMatrixAsPerspective(40.0, 1920.0/1200.0, distance - 50, distance+50);
+
+		viewer.getCamera()->setProjectionMatrixAsPerspective(40.0, 1920.0/2.0 / 1200.0 , distance - 50, distance + 50);
+
+		viewer.getSlave(0)._viewOffset = osg::Matrixd::rotate(osg::DegreesToRadians(rotation), osg::Vec3(1, 0, 0))*osg::Matrixd::lookAt(osg::Vec3d(camHorLoc, distance, camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), osg::Vec3d(0, 0, 1));
+		viewer.getSlave(1)._viewOffset = osg::Matrixd::rotate(osg::DegreesToRadians(rotation), osg::Vec3(1, 0, 0))*osg::Matrixd::lookAt(osg::Vec3d(-camHorLoc, distance, camVertLoc), osg::Vec3d(-camHorLoc, depth, camVertLoc), osg::Vec3d(0, 0, 1));
+
+	
+
+		//viewer.getSlave(0)._viewOffset = osg::Matrixd::lookAt(osg::Vec3d(camHorLoc, distance, camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), osg::Vec3d(0, 0, 1));
+		//viewer.getSlave(0)._projectionOffset = osg::Matrixd::perspective(40.0, 1280.0 / 4800.0, centerDistance - radius, centerDistance - centerCull);
+
+
 		viewer.frame();
 	}
 

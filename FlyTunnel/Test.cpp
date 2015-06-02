@@ -4,7 +4,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 
 
-	FlyTunnel mov("images", "sequence.txt", "..//tunnelDisplaySettings.txt", 1920, 1200, 0);
+	FlyTunnel mov("images", "sequence.txt", "..//tunnelDisplaySettings.txt", 1280*2, 800, 1920);
 	osg::ref_ptr<osgViewer::Viewer> viewer = mov.getViewer();
 
 	while (true)
@@ -17,6 +17,9 @@ int _tmain(int argc, _TCHAR* argv[])
 				viewer->frame();
 			}
 		}
+
+		if (GetAsyncKeyState(VK_ESCAPE))
+			break;
 	}
 
 

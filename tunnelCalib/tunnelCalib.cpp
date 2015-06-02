@@ -2,16 +2,16 @@
 #include "stdafx.h"
 #include "tunnelcalib.h"
 
-int xOffset = 0;
+int xOffset = 1920;
 int yOffset = 0;
 
-double viewWidth = 1920;
-double viewHeight =  1200;
+double viewWidth = 1280*2;
+double viewHeight =  800;
 
 double boxWidth = viewWidth / 100.0;
 double boxHeight = viewHeight / 100.0;
 
-double defaultDistance = (10.0);
+double defaultDistance = 10.0;
 double distance = defaultDistance;
 
 
@@ -261,7 +261,7 @@ void run()
 	while (!viewer.done())
 	{
 
-		viewer.getCamera()->setProjectionMatrixAsPerspective(40.0, 1920.0/2.0 / 1200.0 , distance - 50, distance + 50);
+		viewer.getCamera()->setProjectionMatrixAsPerspective(40.0, 1280.0 / 800.0 , distance - 50, distance + 50);
 
 		viewer.getSlave(0)._viewOffset = osg::Matrixd::rotate(osg::DegreesToRadians(rotation), osg::Vec3(1, 0, 0))*osg::Matrixd::lookAt(osg::Vec3d(camHorLoc, distance, camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), osg::Vec3d(0, 0, 1));
 		viewer.getSlave(1)._viewOffset = osg::Matrixd::rotate(osg::DegreesToRadians(rotation), osg::Vec3(1, 0, 0))*osg::Matrixd::lookAt(osg::Vec3d(-camHorLoc, distance, camVertLoc), osg::Vec3d(-camHorLoc, depth, camVertLoc), osg::Vec3d(0, 0, 1));

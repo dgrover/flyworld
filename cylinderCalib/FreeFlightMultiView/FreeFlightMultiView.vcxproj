@@ -87,8 +87,8 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\SDK\OpenSceneGraph-3.2.1\OpenSceneGraph\build\include;C:\SDK\OpenSceneGraph-3.2.1\OpenSceneGraph\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\SDK\OpenSceneGraph-3.2.1\OpenSceneGraph\build\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\SDK\OpenSceneGraph-3.2.1\OpenSceneGraph\build\install\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\SDK\OpenSceneGraph-3.2.1\OpenSceneGraph\build\install\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

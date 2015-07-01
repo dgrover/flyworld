@@ -8,10 +8,10 @@
 #include <stdio.h>
 
 
-int xoffset = 0;// 1920;
-int yoffset = 0;
-int width = 1920 / 4;//
-int height = 1200 * 2;// //2400;
+int xoffset = 1920.0;
+int yoffset = 0.0;
+int width = 912.0;
+int height = 1140.0 * 2.0;
 float cradius = (7.5 / 2.0);// * 1280.0/800.0; ///7.5 diameter
 float cheight = 6;// * 800.0/1280.0;//3.6; //8 height
 double defaultDistance = (cradius + 12.5)*4.0;//14;//;
@@ -27,7 +27,7 @@ double depth = 0;
 osg::Vec4 backgroundColor = osg::Vec4(0, 0, 0, 1);
 osg::Vec3d up = osg::Vec3d(0, 0, 1); //up vector
 const char* imageFileName = "images//numberline.gif";//"vert_stripe.bmp";
-const char* displayFile = "displaySettings2.txt";
+const char* displayFile = "displaySettings.txt";
 osgViewer::Viewer viewer;
 
 void printInfo();
@@ -211,7 +211,7 @@ int main(int argc, char **argv)
 
 	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 	traits->x = xoffset;
-	traits->y = yoffset + 0;
+	traits->y = yoffset;
 	traits->width = width;
 	traits->height = height;
 	traits->windowDecoration = false;
@@ -245,7 +245,7 @@ int main(int argc, char **argv)
 	{
 		osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 		traits->x = xoffset + width;
-		traits->y = yoffset + 0;
+		traits->y = yoffset;
 		traits->width = width;
 		traits->height = height;
 		traits->windowDecoration = false;
@@ -266,7 +266,7 @@ int main(int argc, char **argv)
 	{
 		osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 		traits->x = xoffset + width*2.0;
-		traits->y = yoffset + 0;
+		traits->y = yoffset;
 		traits->width = width;
 		traits->height = height;
 		traits->windowDecoration = false;
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
 	{
 		osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 		traits->x = xoffset + width*3.0;
-		traits->y = yoffset + 0;
+		traits->y = yoffset;
 		traits->width = width;
 		traits->height = height;
 		traits->windowDecoration = false;
@@ -310,7 +310,7 @@ int main(int argc, char **argv)
 	while (!viewer.done())
 	{
 		viewer.getCamera()->setViewMatrixAsLookAt(osg::Vec3d(camHorLoc, distance, camVertLoc), osg::Vec3d(camHorLoc, depth, camVertLoc), up);
-		viewer.getCamera()->setProjectionMatrixAsPerspective(40.0, (1920.0 / 4.0) / (1200.0*2.0), distance - cradius, distance - cull);
+		viewer.getCamera()->setProjectionMatrixAsPerspective(40.0, 1280.0 / (800.0*2.0), distance - cradius, distance - cull);
 		viewer.getSlave(0)._viewOffset = osg::Matrixd::translate(0.0, 0.0, distance)*osg::Matrixd::rotate(osg::DegreesToRadians(-90.0), osg::Vec3(0, 1, 0))*osg::Matrixd::translate(0.0, 0.0, -1 * distance);
 		viewer.getSlave(1)._viewOffset = osg::Matrixd::translate(0.0, 0.0, distance * 2)*osg::Matrixd::rotate(osg::DegreesToRadians(180.0), osg::Vec3(0, 1, 0));
 		viewer.getSlave(2)._viewOffset = osg::Matrixd::translate(0.0, 0.0, distance)*osg::Matrixd::rotate(osg::DegreesToRadians(90.0), osg::Vec3(0, 1, 0))*osg::Matrixd::translate(0.0, 0.0, -1 * distance);
